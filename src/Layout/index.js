@@ -4,6 +4,7 @@ import { Box } from "@mui/material";
 import CssBaseline from "@mui/material/CssBaseline";
 import DrawerLeft from "../Navigations/DrawerLeft";
 import AppBarStyles from "../Navigations/AppBarStyles";
+import { useContextApi } from "../lib/hooks/useContexApi";
 
 const DrawerHeader = styled("div")(({ theme }) => ({
   display: "flex",
@@ -16,6 +17,7 @@ const DrawerHeader = styled("div")(({ theme }) => ({
 
 const Layout = ({ children }) => {
   const [open, setOpen] = useState(false);
+  const {changeThem} = useContextApi()
 
   return (
     <Box sx={{ display: "flex" }} >

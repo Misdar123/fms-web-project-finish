@@ -17,11 +17,9 @@ import { useSelector } from "react-redux";
 const DevicesBoard = () => {
   const { groupDevice } = useSelector((state) => state.devices);
   const { layoutList } = useSelector((state) => state.layouts);
-  const [openListGroup, setOpenListGroup] = useState(groupDevice?.length !== 0);
+  const [openListGroup, setOpenListGroup] = useState(false);
   const [openListDevices, setOpenListDevices] = useState(true);
-  const [openListLayout, setOpenListLayout] = useState(
-    layoutList?.length !== 0
-  );
+  const [openListLayout, setOpenListLayout] = useState(false);
 
   const [openPopUpNewGroup, setOpenPopUpNewGroup] = useState(false);
   const [openPopUpNewDevice, setOpenPopUpNewDevice] = useState(false);

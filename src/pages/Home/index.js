@@ -1,18 +1,15 @@
 import React, { useState, useRef, createRef, useEffect } from "react";
 import {
   Alert,
-  Grid,
   Box,
   FormControl,
   IconButton,
   ListItem,
   ListItemText,
   InputAdornment,
-  Typography,
-  colors,
 } from "@mui/material";
 
-import DrawerRight from "./Components/DrawerRight";
+import SideBarRight from "./Components/SideBarRight";
 import { useContextApi } from "../../lib/hooks/useContexApi";
 import UndoIcon from "@mui/icons-material/Undo";
 import RedoIcon from "@mui/icons-material/Redo";
@@ -40,7 +37,7 @@ import InsertPhotoIcon from "@mui/icons-material/InsertPhoto";
 import { addTextNode } from "./Components/Drawer/addTextNode";
 import TextFieldsIcon from "@mui/icons-material/TextFields";
 import { selectedShape } from "../../redux/features/drawSlice";
-import DeviceLayout from "./Components/DeviceLayout";
+import DeviceWrapper from "./Components/DeviceWrapper";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
 
 import { Stack } from "@mui/material";
@@ -49,8 +46,7 @@ import Select from "@mui/material/Select";
 import { setIndexLayout } from "../../redux/features/layoutSlice";
 import TextDraw from "./Components/Drawer/TextDraw";
 
-import Lottie from "lottie-react";
-import emptyDataAnimation from "../../assets/animations/data-empty.json";
+import EmptyLayoutAnimation from "./Components/EmptyLayoutAnimation";
 
 const Home = () => {
   const {
@@ -80,10 +76,6 @@ const Home = () => {
 
   const [undoShapes, setUndoShapes] = useState([]);
   const [redoShapes, setRedoShapes] = useState([]);
-  const [deleteShapeId, setDeleteShapId] = useState(null);
-
-  const [shapeName, setShapeName] = useState("");
-  const [lineName, setLineName] = useState("");
 
   const stageEl = createRef();
   const layerEl = createRef();
@@ -138,7 +130,7 @@ const Home = () => {
   };
 
   const addRectangle = () => {
-    const shapeId = Date.now() + "";
+    const shapeId = Date.now().toString();
     const rectangleProperties = {
       name: "rectangle",
       x: getRandomInt(100),
@@ -154,7 +146,7 @@ const Home = () => {
   };
 
   const addCircle = () => {
-    const shapeId = Date.now() + "";
+    const shapeId = Date.now().toString();
     const circelProperties = {
       name: "circle",
       x: getRandomInt(100),
@@ -225,10 +217,6 @@ const Home = () => {
       default:
         break;
     }
-  };
-
-  const drawText = () => {
-    const id = addTextNode(stageEl.current.getStage(), layerEl.current);
   };
 
   const undo = () => {
@@ -339,34 +327,34 @@ const Home = () => {
   };
 
   // delete shape on key press
-  useEffect(() => {
-    const handleDeleteShape = (e) => {
-      if (e.key === "Backspace") {
-        const result = JSON.parse(localStorage.getItem("@shape_key"));
-        if (result === null) return;
-        switch (result.name) {
-          case "rectangle":
-            const newRectangle = rectangles.filter((rect) => {
-              return parseInt(rect.id) !== parseInt(result.id);
-            });
-            if (newRectangle.length !== 0) {
-              setRectangles(newRectangle);
-            }
-            break;
-          case "circle":
-            const newCircle = circles.filter((circle) => {
-              return parseInt(circle.id) !== parseInt(result.id);
-            });
-            setCircles(newCircle);
-            break;
-          default:
-            break;
-        }
-      }
-    };
-    window.addEventListener("keydown", handleDeleteShape);
-    return () => window.removeEventListener("keydown", handleDeleteShape);
-  }, []);
+  // useEffect(() => {
+  //   const handleDeleteShape = (e) => {
+  //     if (e.key === "Backspace") {
+  //       const result = JSON.parse(localStorage.getItem("@shape_key"));
+  //       if (result === null) return;
+  //       switch (result.name) {
+  //         case "rectangle":
+  //           const newRectangle = rectangles.filter((rect) => {
+  //             return parseInt(rect.id) !== parseInt(result.id);
+  //           });
+  //           if (newRectangle.length !== 0) {
+  //             setRectangles(newRectangle);
+  //           }
+  //           break;
+  //         case "circle":
+  //           const newCircle = circles.filter((circle) => {
+  //             return parseInt(circle.id) !== parseInt(result.id);
+  //           });
+  //           setCircles(newCircle);
+  //           break;
+  //         default:
+  //           break;
+  //       }
+  //     }
+  //   };
+  //   window.addEventListener("keydown", handleDeleteShape);
+  //   return () => window.removeEventListener("keydown", handleDeleteShape);
+  // }, []);
 
   const handleSetIndexLayout = (event) => {
     setSelecIndexOfLayout(event.target.value);
@@ -385,273 +373,241 @@ const Home = () => {
   }, [selecIndexOfLayout]);
 
   return (
-    <Grid container component="div" onContextMenu={(e) => e.preventDefault()}>
+    <div onContextMenu={(e) => e.preventDefault()}>
       {/* content */}
-      <Grid item xs={9}>
-        <CreatNewLayout
-          openPopUp={openScreenCreatNewLayout}
-          setOpenPopUp={setOpenScreenCreatNewLayout}
-        />
-        <Stack
-          mt={2}
-          mb={2}
-          direction="row"
-          ml={1}
-          alignItems="center"
-          sx={{
-            border: changeThem ? "none" : "1px solid #e3e3e3",
-            padding: "2px",
-          }}
-        >
-          <IconButton onClick={() => setOpenScreenCreatNewLayout(true)}>
-            <AddRoundedIcon sx={{ fontSize: 30 }} />
-          </IconButton>
-          <FormControl>
+
+      <CreatNewLayout
+        openPopUp={openScreenCreatNewLayout}
+        setOpenPopUp={setOpenScreenCreatNewLayout}
+      />
+      {/* tool bar */}
+      <Stack
+        mt={2}
+        mb={2}
+        direction="row"
+        flexWrap="wrap"
+        ml={1}
+        alignItems="center"
+        sx={{
+          border: changeThem ? "none" : "1px solid #e3e3e3",
+          padding: "2px",
+          minWidth: { xs: "400px", sm: "500px" },
+          maxWidth: "600px",
+        }}
+      >
+        <IconButton onClick={() => setOpenScreenCreatNewLayout(true)}>
+          <AddRoundedIcon sx={{ fontSize: 30 }} />
+        </IconButton>
+        <FormControl>
+          <Select
+            onChange={handleSelectDropDownShape}
+            sx={{ height: "30px" }}
+            displayEmpty
+            startAdornment={
+              <InputAdornment>
+                <CropSquareOutlinedIcon />
+              </InputAdornment>
+            }
+            labelId="demo-simple-select-label"
+            id="demo-simple-select-label"
+            inputProps={{ "aria-label": "Without label" }}
+          >
+            <MenuItem value={"square"}>
+              <ListItem>
+                <CropSquareOutlinedIcon />
+                <ListItemText>Square</ListItemText>
+              </ListItem>
+            </MenuItem>
+            <MenuItem value={"circle"}>
+              <ListItem>
+                <CircleOutlinedIcon />
+                <ListItemText>Circle</ListItemText>
+              </ListItem>
+            </MenuItem>
+          </Select>
+        </FormControl>
+
+        <FormControl>
+          <Select
+            onChange={handleSelectLineDropDown}
+            sx={{ height: "30px", ml: 1 }}
+            displayEmpty
+            startAdornment={
+              <InputAdornment>
+                <BorderColorRoundedIcon />
+              </InputAdornment>
+            }
+            labelId="demo-simple-select-label"
+            id="demo-simple-select-label"
+            inputProps={{ "aria-label": "Without label" }}
+          >
+            <MenuItem value={"pencil"}>
+              <ListItem>
+                <BrushIcon />
+                <ListItemText>Pencil</ListItemText>
+              </ListItem>
+            </MenuItem>
+            <MenuItem value={"stright"}>
+              <ListItem>
+                <BorderColorRoundedIcon />
+                <ListItemText>Line</ListItemText>
+              </ListItem>
+            </MenuItem>
+            <MenuItem value={"eraser"}>
+              <ListItem>
+                <AutoFixNormalOutlinedIcon />
+                <ListItemText>Eraser</ListItemText>
+              </ListItem>
+            </MenuItem>
+          </Select>
+        </FormControl>
+        <IconButton onClick={drawImage}>
+          <InsertPhotoIcon />
+        </IconButton>
+        <IconButton onClick={addText}>
+          <TextFieldsIcon />
+        </IconButton>
+        <IconButton onClick={undo}>
+          <UndoIcon />
+        </IconButton>
+        <IconButton onClick={redo}>
+          <RedoIcon />
+        </IconButton>
+        <IconButton onClick={handleDeleteDevice}>
+          <DeleteIcon sx={{ color: deviceDelete ? "dodgerblue" : "" }} />
+        </IconButton>
+        <IconButton onClick={saveShapes}>
+          <SaveIcon />
+        </IconButton>
+        {layoutList.length !== 0 && (
+          <Stack justifyContent="space-between" direction="row" ml={1}>
             <Select
-              value={shapeName}
-              onChange={handleSelectDropDownShape}
+              value={selecIndexOfLayout}
+              onChange={handleSetIndexLayout}
               sx={{ height: "30px" }}
               displayEmpty
-              startAdornment={
-                <InputAdornment>
-                  <CropSquareOutlinedIcon />
-                </InputAdornment>
-              }
-              labelId="demo-simple-select-label"
-              id="demo-simple-select-label"
               inputProps={{ "aria-label": "Without label" }}
             >
-              <MenuItem value={"square"}>
-                <ListItem>
-                  <CropSquareOutlinedIcon />
-                  <ListItemText>Square</ListItemText>
-                </ListItem>
-              </MenuItem>
-              <MenuItem value={"circle"}>
-                <ListItem>
-                  <CircleOutlinedIcon />
-                  <ListItemText>Circle</ListItemText>
-                </ListItem>
-              </MenuItem>
+              {layoutList.map((layout, index) => (
+                <MenuItem key={index} value={index}>
+                  {layout.name}
+                </MenuItem>
+              ))}
             </Select>
-          </FormControl>
+          </Stack>
+        )}
+      </Stack>
+      <input
+        style={{ display: "none" }}
+        type="file"
+        ref={fileUploadEl}
+        onChange={addImage}
+      />
 
-          <FormControl>
-            <Select
-              value={lineName}
-              onChange={handleSelectLineDropDown}
-              sx={{ height: "30px", ml: 1 }}
-              displayEmpty
-              startAdornment={
-                <InputAdornment>
-                  <BorderColorRoundedIcon />
-                </InputAdornment>
-              }
-              labelId="demo-simple-select-label"
-              id="demo-simple-select-label"
-              inputProps={{ "aria-label": "Without label" }}
-            >
-              <MenuItem value={"pencil"}>
-                <ListItem>
-                  <BrushIcon />
-                  <ListItemText>Pencil</ListItemText>
-                </ListItem>
-              </MenuItem>
-              <MenuItem value={"stright"}>
-                <ListItem>
-                  <BorderColorRoundedIcon />
-                  <ListItemText>Line</ListItemText>
-                </ListItem>
-              </MenuItem>
-              <MenuItem value={"eraser"}>
-                <ListItem>
-                  <AutoFixNormalOutlinedIcon />
-                  <ListItemText>Eraser</ListItemText>
-                </ListItem>
-              </MenuItem>
-            </Select>
-          </FormControl>
-          <IconButton onClick={drawImage}>
-            <InsertPhotoIcon />
-          </IconButton>
-          <IconButton onClick={addText}>
-            <TextFieldsIcon />
-          </IconButton>
-          <IconButton onClick={undo}>
-            <UndoIcon />
-          </IconButton>
-          <IconButton onClick={redo}>
-            <RedoIcon />
-          </IconButton>
-          <IconButton onClick={handleDeleteDevice}>
-            <DeleteIcon sx={{ color: deviceDelete ? "dodgerblue" : "" }} />
-          </IconButton>
-          <IconButton onClick={saveShapes}>
-            <SaveIcon />
-          </IconButton>
-          {layoutList.length !== 0 && (
-            <Stack justifyContent="space-between" direction="row" ml={1}>
-              <Select
-                value={selecIndexOfLayout}
-                onChange={handleSetIndexLayout}
-                sx={{ height: "30px" }}
-                displayEmpty
-                inputProps={{ "aria-label": "Without label" }}
-              >
-                {layoutList.map((layout, index) => (
-                  <MenuItem key={index} value={index}>
-                    {layout.name}
-                  </MenuItem>
-                ))}
-              </Select>
-            </Stack>
-          )}
-        </Stack>
-        {/* content */}
-
-        <div ref={printComponentRef}>
-          {layoutList.length === 0 && (
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-                alignItems: "center",
+      {/* content */}
+      <div ref={printComponentRef}>
+        {layoutList.length === 0 && <EmptyLayoutAnimation />}
+        {layoutList.length !== 0 && (
+          <DeviceWrapper>
+            <Stage
+              width={window.innerWidth}
+              height={window.innerHeight}
+              ref={stageEl}
+              style={{ backgroundColor: changeThem ? "#001e3c" : "#FFF" }}
+              onMouseDown={(e) => {
+                const clickedOnEmpty = e.target === e.target.getStage();
+                if (clickedOnEmpty) {
+                  handleSelecShape(null);
+                }
               }}
             >
-              <Lottie
-                style={{ height: "300px", width: "300px" }}
-                animationData={emptyDataAnimation}
-                loop={false}
-              />
-              <Typography sx={{ fontWeight: "bold", color: colors.grey[500] }}>
-                Layout Empty
-              </Typography>
-            </div>
-          )}
-          {layoutList.length !== 0 && (
-            <>
-              <input
-                style={{ display: "none" }}
-                type="file"
-                ref={fileUploadEl}
-                onChange={addImage}
-              />
-              <DeviceLayout>
-                <Stage
-                  width={window.innerWidth}
-                  height={window.innerHeight}
-                  ref={stageEl}
-                  style={{ backgroundColor: changeThem ? "#001e3c"  : "#FFF" }}
-                  onMouseDown={(e) => {
-                    const clickedOnEmpty = e.target === e.target.getStage();
-                    if (clickedOnEmpty) {
-                      handleSelecShape(null);
-                    }
-                  }}
-                >
-                  <Layer ref={layerEl}>
-                    {textDraw.map((text, index) => {
-                      return (
-                        <TextDraw
-                          key={index}
-                          textProps={text}
-                          isSelected={text.id === shapesSelected?.id}
-                          onSelect={() => {
-                            handleSelecShape(text);
-                            setDeleteShapId(text.id);
-                          }}
-                          onChange={(newAttrs) => {
-                            const texts = textDraw.slice();
-                            texts[index] = newAttrs;
-                            setTextDraw(texts);
-                          }}
-                        />
-                      );
-                    })}
-                    {rectangles.map((rect, index) => {
-                      return (
-                        <DrawRectangle
-                          strokeColor={rect.color}
-                          key={index}
-                          shapeProps={rect}
-                          isSelected={rect.id === shapesSelected?.id}
-                          onSelect={() => {
-                            handleSelecShape(rect);
-                            setDeleteShapId(rect.id);
-                            localStorage.setItem(
-                              "@shape_key",
-                              JSON.stringify(rect)
-                            );
-                          }}
-                          onChange={(newAttrs) => {
-                            const rects = rectangles.slice();
-                            rects[index] = newAttrs;
-                            setRectangles(rects);
-                          }}
-                        />
-                      );
-                    })}
-                    {circles.map((circle, index) => {
-                      return (
-                        <DrawCircle
-                          key={index}
-                          strokeColor={circle.color}
-                          shapeProps={circle}
-                          isSelected={circle.id === shapesSelected?.id}
-                          onSelect={() => {
-                            handleSelecShape(circle);
-                            localStorage.setItem(
-                              "@shape_key",
-                              JSON.stringify(circle)
-                            );
-                          }}
-                          onChange={(newAttrs) => {
-                            const circs = circles.slice();
-                            circs[index] = newAttrs;
-                            setCircles(circs);
-                          }}
-                        />
-                      );
-                    })}
-                    {images.map((image, index) => {
-                      return (
-                        <ImgPicker
-                          key={index}
-                          imageUrl={image.content}
-                          isSelected={image.id === shapesSelected?.id}
-                          onSelect={() => {
-                            handleSelecShape(image);
-                          }}
-                          onChange={(newAttrs) => {
-                            const imgs = images.slice();
-                            imgs[index] = newAttrs;
-                          }}
-                        />
-                      );
-                    })}
-                  </Layer>
-                </Stage>
-              </DeviceLayout>
-            </>
-          )}
-        </div>
+              <Layer ref={layerEl}>
+                {textDraw.map((text, index) => {
+                  return (
+                    <TextDraw
+                      key={index}
+                      textProps={text}
+                      isSelected={text.id === shapesSelected?.id}
+                      onSelect={() => {
+                        handleSelecShape(text);
+                      }}
+                      onChange={(newAttrs) => {
+                        const texts = textDraw.slice();
+                        texts[index] = newAttrs;
+                        setTextDraw(texts);
+                      }}
+                    />
+                  );
+                })}
+                {rectangles.map((rect, index) => {
+                  return (
+                    <DrawRectangle
+                      strokeColor={rect.color}
+                      key={index}
+                      shapeProps={rect}
+                      isSelected={rect.id === shapesSelected?.id}
+                      onSelect={() => {
+                        handleSelecShape(rect);
+                      }}
+                      onChange={(newAttrs) => {
+                        const rects = rectangles.slice();
+                        rects[index] = newAttrs;
+                        setRectangles(rects);
+                      }}
+                    />
+                  );
+                })}
+                {circles.map((circle, index) => {
+                  return (
+                    <DrawCircle
+                      key={index}
+                      strokeColor={circle.color}
+                      shapeProps={circle}
+                      isSelected={circle.id === shapesSelected?.id}
+                      onSelect={() => {
+                        handleSelecShape(circle);
+                      }}
+                      onChange={(newAttrs) => {
+                        const circs = circles.slice();
+                        circs[index] = newAttrs;
+                        setCircles(circs);
+                      }}
+                    />
+                  );
+                })}
+                {images.map((image, index) => {
+                  return (
+                    <ImgPicker
+                      key={index}
+                      imageUrl={image.content}
+                      isSelected={image.id === shapesSelected?.id}
+                      onSelect={() => {
+                        handleSelecShape(image);
+                      }}
+                      onChange={(newAttrs) => {
+                        const imgs = images.slice();
+                        imgs[index] = newAttrs;
+                      }}
+                    />
+                  );
+                })}
+              </Layer>
+            </Stage>
+          </DeviceWrapper>
+        )}
+      </div>
 
-        {/* alert messages */}
-        <Box sx={{ position: "absolute", bottom: "20px" }}>
-          <Collapse in={isDisplayAlert.isError}>
-            <Alert severity={isDisplayAlert.type}>
-              {isDisplayAlert.message}
-            </Alert>
-          </Collapse>
-        </Box>
-      </Grid>
+      {/* alert messages */}
+      <Box sx={{ position: "absolute", bottom: "20px" }}>
+        <Collapse in={isDisplayAlert.isError}>
+          <Alert severity={isDisplayAlert.type}>{isDisplayAlert.message}</Alert>
+        </Collapse>
+      </Box>
 
-      {/* right navigations */}
-      <Grid item xs={3}>
-        <DrawerRight printComponentRef={printComponentRef} />
-      </Grid>
-    </Grid>
+      {/* Side bar rught */}
+
+      <SideBarRight printComponentRef={printComponentRef} />
+    </div>
   );
 };
 

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Divider, Stack } from "@mui/material";
 import List from "@mui/material/List";
 import ListItemButton from "@mui/material/ListItemButton";
@@ -10,7 +10,10 @@ import ExpandMore from "@mui/icons-material/ExpandMore";
 import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
 import { useSelector } from "react-redux";
 
-import { updateDataBase } from "../../../../../../lib/function/dataBaseCRUD";
+import {
+  readDataBase,
+  updateDataBase,
+} from "../../../../../../lib/function/dataBaseCRUD";
 import CardDrag from "../../../cardDrag";
 import ListNoResult from "../ListNoResult";
 
@@ -20,12 +23,14 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import { Button } from "@mui/material";
+import { useContextApi } from "../../../../../../lib/hooks/useContexApi";
 
 const ListAllDevices = ({ onOpen, open }) => {
+  const { currentUserId, deviceInGroups } = useContextApi();
   const { allDevice } = useSelector((state) => state.devices);
   const { userId } = useSelector((state) => state.user);
-  const dragItems = allDevice;
   const [openPopUp, setOpenPopUp] = useState(false);
+  const [dragItems, setDragItems] = useState(allDevice);
 
   const deleteDevice = (id) => {
     const result = allDevice.filter((device) => device.id !== id);
@@ -36,6 +41,18 @@ const ListAllDevices = ({ onOpen, open }) => {
   const handlePopUp = () => {
     setOpenPopUp(!openPopUp);
   };
+
+  useEffect(() => {
+    if (deviceInGroups.length !== 0) {
+      let newDevice = allDevice;
+      deviceInGroups.forEach((device) => {
+        newDevice = newDevice.filter((value) => value.id !== device.id);
+      });
+      setDragItems(newDevice);
+    } else {
+      setDragItems(allDevice);
+    }
+  }, []);
 
   return (
     <>
@@ -52,11 +69,7 @@ const ListAllDevices = ({ onOpen, open }) => {
             {dragItems.length !== 0 ? (
               dragItems.map((data, index) => (
                 <div key={index}>
-                  <CardDrag
-                    data={data}
-                    key={index}
-                    onClick={handlePopUp}
-                  />
+                  <CardDrag data={data} key={index} onClick={handlePopUp} />
 
                   <Dialog
                     open={openPopUp}
@@ -71,7 +84,7 @@ const ListAllDevices = ({ onOpen, open }) => {
                       </DialogContentText>
                     </DialogContent>
                     <DialogActions>
-                      <Button onClick={handlePopUp}>cancle</Button>
+                      <Button onClick={handlePopUp}>cancel</Button>
                       <Button onClick={() => deleteDevice(data.id)} autoFocus>
                         ok
                       </Button>

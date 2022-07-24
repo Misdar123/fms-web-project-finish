@@ -9,7 +9,7 @@ import {
   addDeviceInLayout,
 } from "../../../../redux/features/deviceSlice";
 
-const DeviceLayout = ({ children }) => {
+const DeviceWrapper = ({ children }) => {
   const dispatch = useDispatch();
   const { setIsDisplayAlert, currentUserId } = useContextApi();
 
@@ -141,4 +141,4 @@ const DeviceLayout = ({ children }) => {
   );
 };
 
-export default DeviceLayout;
+export default DeviceWrapper;

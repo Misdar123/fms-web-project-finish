@@ -49,6 +49,8 @@ function App() {
   const [textDraw, setTextDraw] = useState([]);
   const [zoomSquare, setZoomSquare] = useState(1);
 
+  const [deviceInGroups, setDeviceInGroups] = useState([]);
+
   const them = JSON.parse(localStorage.getItem("THEM"));
   const [changeThem, setChangeThem] = useState(them);
 
@@ -88,6 +90,17 @@ function App() {
     },
   });
 
+  // useEffect(() => {
+  //   const path = `users/${currentUserId}/groupDevices`;
+  //   readDataBase(path, (result) => {
+  //     const devices = [];
+  //     result
+  //       .map((value) => value.devices)
+  //       .forEach((data) => data !== undefined && devices.push(...data));
+  //     setDeviceInGroups(devices);
+  //   });
+  // }, []);
+
   if (!isDataAvaliable) {
     return <LoadingPage />;
   }
@@ -116,6 +129,8 @@ function App() {
           setZoomSquare,
           changeThem,
           setChangeThem,
+          deviceInGroups,
+          setDeviceInGroups,
         }}
       >
         <DndProvider backend={HTML5Backend}>

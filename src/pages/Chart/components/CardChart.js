@@ -17,8 +17,8 @@ import MenuItem from "@mui/material/MenuItem";
 
 const CardChart = ({ data, title, sensorName, isShowAllSensors }) => {
   const { changeThem } = useContextApi();
-  const bgColor = changeThem ?  "#001e3c" : "#fff";
-  const colorThem = changeThem ?  "#FFF" : "#000";
+  const bgColor = changeThem ? "#001e3c" : "#fff";
+  const colorThem = changeThem ? "#FFF" : "#000";
 
   const [anchorEl, setAnchorEl] = useState(null);
   const openMenu = Boolean(anchorEl);
@@ -30,16 +30,33 @@ const CardChart = ({ data, title, sensorName, isShowAllSensors }) => {
     setAnchorEl(null);
   };
 
-  const downloadData = (type = "txt") => {
+  const downloadData = (type) => {
+    const titles = Object.keys(data[0]);
+    const listData = [];
+    data.forEach((value) => {
+      listData.push(Object.values(value));
+    });
+    listData.unshift(titles)
+
     const element = document.createElement("a");
 
-    const printData = data.map((d) => JSON.stringify(d));
-
-    const file = new Blob([...printData.join("\n")], {
-      type: type === "txt" ? "txt" : "csv",
+    const file = new Blob([...listData.join("\n")], {
+      type: type,
     });
     element.href = URL.createObjectURL(file);
-    element.download = type === "txt" ? `data.txt` : `data.csv`;
+    let fileExtention = "";
+    switch (type) {
+      case "txt":
+        fileExtention = "data.txt";
+        break;
+      case "csv":
+        fileExtention = "data.csv";
+        break;
+      default:
+        fileExtention = "data.xlsx";
+        break;
+    }
+    element.download = fileExtention;
     document.body.appendChild(element);
     element.click();
   };
@@ -99,6 +116,16 @@ const CardChart = ({ data, title, sensorName, isShowAllSensors }) => {
             }}
           >
             export as txt
+          </MenuItem>
+          <MenuItem
+            onClick={() => {
+              downloadData(
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+              );
+              handleClose();
+            }}
+          >
+            export as xlsx
           </MenuItem>
         </Menu>
         <Stack direction="row" justifyContent="space-between">

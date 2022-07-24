@@ -15,16 +15,14 @@ import {
 } from "@mui/material";
 import { Slider } from "@mui/material";
 import { useSelector } from "react-redux";
-import { useDragLayer } from "react-dnd";
 import { useContextApi } from "../../../../lib/hooks/useContexApi";
+import DeviceComponent from "../deviceComponent";
 
 const CardDrop = ({
   item,
-  size,
   onClick = () => null,
   onDoubleClick = () => null,
   isActive,
-  isDraging,
 }) => {
   const { changeThem } = useContextApi();
   const { publicDevice } = useSelector((state) => state.devices);
@@ -167,20 +165,11 @@ const CardDrop = ({
         onMouseLeave={() => setShowSensorValue(false)}
         onMouseMove={handleMouseMove}
         onClick={onClick}
-        style={{
-          backgroundColor: "dodgerblue",
-          position: "absolute",
-          border: isActive ? "1px solid red" : "none",
-          minHeight: `50px`,
-          minWidth: `50px`,
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "flex-end",
-          alignItems: "center",
-          borderRadius: "5px",
-          padding: "5px",
-        }}
+        style={{ position: "absolute" }}
       >
+        <DeviceComponent
+          deviceStyle={{ border: isActive ? "2px solid dodgerblue" : "none" }}
+        />
         <div
           style={{
             display: "flex",
@@ -203,6 +192,8 @@ const CardDrop = ({
             ))}
         </div>
       </div>
+
+      {/* device settings */}
       <Menu
         id="basic-menu"
         anchorEl={anchorEl}

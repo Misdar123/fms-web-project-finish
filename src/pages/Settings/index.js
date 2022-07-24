@@ -4,16 +4,27 @@ import { useContextApi } from "../../lib/hooks/useContexApi";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Switch from "@mui/material/Switch";
 
-import { Card, Container, colors, Divider } from "@mui/material";
+import { colors } from "@mui/material";
 import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 
+import ListSubheader from "@mui/material/ListSubheader";
+import Collapse from "@mui/material/Collapse";
+import ColorLensIcon from "@mui/icons-material/ColorLens";
+import ExpandLess from "@mui/icons-material/ExpandLess";
+import ExpandMore from "@mui/icons-material/ExpandMore";
+
+import DevicesRoundedIcon from "@mui/icons-material/DevicesRounded";
+import AccountBoxIcon from "@mui/icons-material/AccountBox";
+import KeyIcon from "@mui/icons-material/Key";
+import ManageAccountsSharpIcon from "@mui/icons-material/ManageAccountsSharp";
+import CallSharpIcon from "@mui/icons-material/CallSharp";
+
 const MaterialUISwitch = styled(Switch)(({ theme }) => ({
-  width: 62,
-  height: 34,
+  width: 55,
+  height: 27,
   padding: 7,
   "& .MuiSwitch-switchBase": {
     margin: 1,
@@ -35,8 +46,8 @@ const MaterialUISwitch = styled(Switch)(({ theme }) => ({
   },
   "& .MuiSwitch-thumb": {
     backgroundColor: theme.palette.mode === "dark" ? "#003892" : "#001e3c",
-    width: 32,
-    height: 32,
+    width: 25,
+    height: 25,
     "&:before": {
       content: "''",
       position: "absolute",
@@ -58,47 +69,145 @@ const MaterialUISwitch = styled(Switch)(({ theme }) => ({
   },
 }));
 
+const Cardontainer = styled("div")(({ theme }) => ({
+  [theme.breakpoints.down("sm")]: {
+    minWidth: "400px",
+  },
+  [theme.breakpoints.up("sm")]: {
+    minWidth: "500px",
+  },
+}));
+
 const Settings = () => {
   const { changeThem, setChangeThem } = useContextApi();
+  const [openThemSetting, setOpenThemSetting] = useState(true);
+  const [openDeviceSetting, setOpenDeviceSetting] = useState(true);
+  const [openProfileSetting, setOpenProfileSetting] = useState(true);
+
+  const handleOpenThemSettings = () => {
+    setOpenThemSetting(!openThemSetting);
+  };
+
+  const handleOpenDeviceSettings = () => {
+    setOpenDeviceSetting(!openDeviceSetting);
+  };
+
+  const handleOpenProfileSettings = () => {
+    setOpenProfileSetting(!openProfileSetting);
+  };
 
   const handleChangeThem = () => {
     setChangeThem((them) => !them);
-    console.log(changeThem)
     localStorage.setItem("THEM", `${!changeThem}`);
   };
 
   return (
-    <Container
-      sx={{
-        pt: 5,
+    <div
+      style={{
+        paddingTop: "50px",
         minHeight: window.innerHeight,
         backgroundColor: changeThem ? "#0a1929" : colors.grey[100],
         display: "flex",
         justifyContent: "center",
       }}
     >
-      <Card
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          minWidth: "400px",
-          height: "300px",
-        }}
-      >
-        <h1 style={{ textAlign: "center" }}>Settings</h1>
-        <List>
-          <ListItemButton>
+      <Cardontainer>
+        <List
+          sx={{ width: "100%", bgcolor: "background.paper" }}
+          component="nav"
+          aria-labelledby="nested-list-subheader"
+          subheader={
+            <ListSubheader component="div" id="nested-list-subheader">
+              <h1 style={{ textAlign: "center" }}>Settings</h1>
+            </ListSubheader>
+          }
+        >
+          {/* them setting */}
+
+          <ListItemButton onClick={handleOpenThemSettings}>
             <ListItemIcon>
-              <FormControlLabel
-                onChange={handleChangeThem}
-                control={<MaterialUISwitch sx={{ m: 1 }} checked={changeThem}/>}
-              />
+              <ColorLensIcon />
             </ListItemIcon>
-            <ListItemText primary={changeThem ? "Light" : "Dark"} />
+            <ListItemText primary="Change Them" />
+            {openThemSetting ? <ExpandLess /> : <ExpandMore />}
           </ListItemButton>
+          <Collapse in={openThemSetting} timeout="auto" unmountOnExit>
+            <List component="div" disablePadding>
+              <ListItemButton sx={{ pl: 5 }}>
+                <ListItemIcon>
+                  <FormControlLabel
+                    onChange={handleChangeThem}
+                    control={<MaterialUISwitch checked={changeThem} />}
+                  />
+                </ListItemIcon>
+                <ListItemText primary={changeThem ? "Light" : "Dark"} />
+              </ListItemButton>
+            </List>
+          </Collapse>
+
+          {/* device settings */}
+
+          <ListItemButton onClick={handleOpenDeviceSettings}>
+            <ListItemIcon>
+              <DevicesRoundedIcon />
+            </ListItemIcon>
+            <ListItemText primary="Devices" />
+            {openDeviceSetting ? <ExpandLess /> : <ExpandMore />}
+          </ListItemButton>
+          <Collapse in={openDeviceSetting} timeout="auto" unmountOnExit>
+            <div
+              style={{
+                marginLeft: "50px",
+                marginRight: "25px",
+                border: "1px solid #f3f3f3",
+                minHeight: "50px",
+                borderRadius: "5px",
+                marginBottom: "10px",
+                padding: "10px",
+              }}
+            >
+              <List component="div" disablePadding>
+                <ListItemButton>
+                  <DevicesRoundedIcon />
+                </ListItemButton>
+              </List>
+            </div>
+          </Collapse>
+
+          {/* profile setting */}
+
+          <ListItemButton onClick={handleOpenProfileSettings}>
+            <ListItemIcon>
+              <AccountBoxIcon />
+            </ListItemIcon>
+            <ListItemText primary="Profile" />
+            {openProfileSetting ? <ExpandLess /> : <ExpandMore />}
+          </ListItemButton>
+          <Collapse in={openProfileSetting} timeout="auto" unmountOnExit>
+            <List component="div" disablePadding>
+              <ListItemButton sx={{ pl: 5 }}>
+                <ListItemIcon>
+                  <KeyIcon />
+                </ListItemIcon>
+                <ListItemText>Reset Password</ListItemText>
+              </ListItemButton>
+              <ListItemButton sx={{ pl: 5 }}>
+                <ListItemIcon>
+                  <ManageAccountsSharpIcon />
+                </ListItemIcon>
+                <ListItemText>Change User Name</ListItemText>
+              </ListItemButton>
+              <ListItemButton sx={{ pl: 5 }}>
+                <ListItemIcon>
+                  <CallSharpIcon />
+                </ListItemIcon>
+                <ListItemText>Change Phone Number</ListItemText>
+              </ListItemButton>
+            </List>
+          </Collapse>
         </List>
-      </Card>
-    </Container>
+      </Cardontainer>
+    </div>
   );
 };
 

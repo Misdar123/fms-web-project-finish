@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { useDrag } from "react-dnd";
 import { Card, IconButton } from "@mui/material";
 import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
+import "./styles.css";
+import DeviceComponent from "../deviceComponent";
 
 const CardDrag = ({
   data,
@@ -26,13 +28,7 @@ const CardDrag = ({
   return (
     <div
       ref={dragRef}
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
-        position: "relative",
-      }}
+      className="card-drag-container"
       onDoubleClick={() => {
         onDoubleClick();
         handleActive();
@@ -40,31 +36,15 @@ const CardDrag = ({
     >
       {isActive && (
         <IconButton
-          sx={{ position: "absolute", top: 0, right: 0 }}
+          sx={{ position: "absolute", top: "-20px", zIndex: 2}}
           onClick={onClick}
         >
           <RemoveCircleIcon fontSize="20px" sx={{ color: "red" }} />
         </IconButton>
       )}
-      <Card
-        sx={{
-          width: size ? ` ${size}px` : "50px",
-          height: size ? ` ${size}px` : "50px",
-          m: 2,
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          borderColor: isActive ? "dodgerblue" : "white",
-          backgroundColor: "dodgerblue"
-        }}
-      >
-        {/* <img
-          src={data?.icon.uri}
-          width={size ? `${size / 2}px` : "30px"}
-          height={size ? `${size / 2}px` : "30px"}
-        /> */}
-      </Card>
-      <small>{data?.name}</small>
+      <DeviceComponent />
+
+      <small style={{textAlign: "center"}}>{data?.name}</small>
     </div>
   );
 };

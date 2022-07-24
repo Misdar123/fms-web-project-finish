@@ -63,7 +63,7 @@ export default function CreatNewLayout({ openPopUp, setOpenPopUp }) {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handlePopUp}>cancle</Button>
+          <Button onClick={handlePopUp}>cancel</Button>
           <Button
             onClick={() => {
               handleCreateLayout();
@@ -71,7 +71,7 @@ export default function CreatNewLayout({ openPopUp, setOpenPopUp }) {
             }}
             autoFocus
           >
-            ok
+            create
           </Button>
         </DialogActions>
       </Dialog>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import IconButton from "@mui/material/IconButton";
-import { Stack } from "@mui/material";
+import { Button, Stack } from "@mui/material";
 import Collapse from "@mui/material/Collapse";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
@@ -18,28 +18,43 @@ import Menu from "@mui/material/Menu";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useContextApi } from "../../../../../../lib/hooks/useContexApi";
 import {
+  readDataBase,
   updateDataBase,
   writeDataBase,
 } from "../../../../../../lib/function/dataBaseCRUD";
 import { useSelector } from "react-redux";
 
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
+
 const ListGroupNested = ({ data, isListOpen, onClick, onDoubleClick }) => {
   const { currentUserId } = useContextApi();
   const { groupDevice, allDevice } = useSelector((state) => state.devices);
   const { userId } = useSelector((state) => state.user);
+  const [dragItems, setDragItems] = useState(null);
+  const [openPopUp, setOpenPopUp] = useState(false);
 
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
 
-  const dragItems = [];
-  const dataDevices = data.devices || [];
+  useEffect(() => {
+    const path = `users/${currentUserId}/groupDevices`;
+    readDataBase(path, (value) => {
+      if (!value) return;
+      const newData = value.filter((group) => group.id === data.id);
+      if (newData.length !== 0) {
+        setDragItems(newData.devices);
+      }
+    });
+  }, []);
 
-  dataDevices.forEach((device) => {
-    const result = allDevice.find((value) => value.id === device.id);
-    if (result) {
-      dragItems.push(result);
-    }
-  });
+  // const updateListAllDevice = (newDevice) => {
+  //   const path = `users/${currentUserId}/devices`;
+  //   updateDataBase(path, [...allDevice, newDevice]);
+  // };
 
   const handleDeleteDevice = (id) => {
     const groupData = groupDevice.find((group) => group.id === data.id);
@@ -48,6 +63,9 @@ const ListGroupNested = ({ data, isListOpen, onClick, onDoubleClick }) => {
     const deviceInGroup = groupData.devices.filter(
       (device) => device.id !== id
     );
+
+    // const deviceDeleted = groupData.devices.find((device) => device.id === id);
+
     const newGroup = {
       name: groupData.name,
       id: groupData.id,
@@ -74,6 +92,10 @@ const ListGroupNested = ({ data, isListOpen, onClick, onDoubleClick }) => {
     handleCloseMenu();
   };
 
+  const handlePopUp = () => {
+    setOpenPopUp(!openPopUp);
+  };
+
   return (
     <>
       <Stack
@@ -93,7 +115,7 @@ const ListGroupNested = ({ data, isListOpen, onClick, onDoubleClick }) => {
       </Stack>
       <Collapse in={isListOpen} timeout="auto" unmountOnExit>
         <Stack direction="row" mb={5} flexWrap="wrap" ml={5}>
-          {dragItems.length !== 0 &&
+          {dragItems &&
             dragItems.map((list, index) => (
               <CardDrag
                 data={list}
@@ -105,7 +127,27 @@ const ListGroupNested = ({ data, isListOpen, onClick, onDoubleClick }) => {
         </Stack>
       </Collapse>
 
-      <Menu
+      <Dialog
+        open={openPopUp}
+        onClose={handlePopUp}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title"></DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            are you sure want to exit?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handlePopUp}>cancel</Button>
+          <Button onClick={handleDeleteGroupListItem} autoFocus>
+            ok
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* <Menu
         id="basic-menu"
         anchorEl={anchorEl}
         open={open}
@@ -122,7 +164,7 @@ const ListGroupNested = ({ data, isListOpen, onClick, onDoubleClick }) => {
             <ListItemText primary={`Delete ${data.name}`} />
           </ListItemButton>
         </List>
-      </Menu>
+      </Menu> */}
     </>
   );
 };

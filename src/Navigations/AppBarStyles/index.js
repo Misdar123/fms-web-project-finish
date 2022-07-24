@@ -40,21 +40,19 @@ const AppBar = styled(MuiAppBar, {
 }));
 
 const AppBarStyles = ({ isOpen, setIsOpen }) => {
-  const { setIsAuth, changeThem, setChangeThem } = useContextApi();
-
+  const { setIsAuth, setChangeThem } = useContextApi();
   const [openPopUp, setOpenPopUp] = useState(false);
 
   const handleDrawerOpen = () => {
     setIsOpen(true);
   };
 
-
   const handleLogout = () => {
     const auth = getAuth();
     localStorage.clear();
-    setChangeThem(false)
+    setChangeThem(false);
     signOut(auth).then(() => {
-      setIsAuth(false)
+      setIsAuth(false);
     });
   };
 
@@ -81,14 +79,15 @@ const AppBarStyles = ({ isOpen, setIsOpen }) => {
           onClick={handleDrawerOpen}
           edge="start"
           sx={{
-            marginRight: 5,
+            marginRight: 2,
             ...(isOpen && { display: "none" }),
           }}
         >
           <MenuIcon />
         </IconButton>
         <IconLogo />
-        <Box sx={{ display: { xs: "none", md: "flex" } }}>
+        {/* sx={{ display: { xs: "none", md: "flex" } }} */}
+        <Box>
           <IconButton
             size="large"
             aria-label="show 4 new mails"
@@ -142,7 +141,7 @@ const AppBarStyles = ({ isOpen, setIsOpen }) => {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handlePopUp}>cancle</Button>
+          <Button onClick={handlePopUp}>cancel</Button>
           <Button onClick={handleLogout} autoFocus>
             ok
           </Button>

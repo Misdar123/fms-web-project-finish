@@ -1,0 +1,46 @@
+.shadow {
+    width: 64px;
+    height: 64px;
+    background-color: #8be9c6;
+    border-radius: 10px;
+  }
+  .container {
+    z-index: 1;
+    position: relative; 
+    width: 60px;
+    height: 60px;
+    background-color: dodgerblue;
+    overflow: hidden;
+    border-radius: 10px;
+  }
+
+  .cornor {
+    height: 40px;
+    width: 18px;
+    background-color: #34dd9f;
+  }
+  .top-left {
+    position: absolute;
+    top: -12px;
+    left: -3px;
+    transform: rotate(45deg);
+  }
+  .top-right {
+    position: absolute;
+    top: -12px;
+    right: -3px;
+    transform: rotate(135deg);
+  }
+
+  .bottom-left {
+    position: absolute;
+    bottom: -12px;
+    left: -3px;
+    transform: rotate(135deg);
+  }
+  .bottom-right {
+    position: absolute;
+    bottom: -12px;
+    right: -3px;
+    transform: rotate(45deg);
+  }

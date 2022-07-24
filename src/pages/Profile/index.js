@@ -37,9 +37,9 @@ const MyProfile = () => {
   };
 
   return (
-    <Container
-      sx={{
-        pt: 5,
+    <div
+      style={{
+        paddingTop: "50px",
         minHeight: window.innerHeight,
         backgroundColor: changeThem ?  "#0a1929" : colors.grey[100],
         display: "flex",
@@ -104,7 +104,7 @@ const MyProfile = () => {
           </Button>
         </DialogActions>
       </Dialog>
-    </Container>
+    </div>
   );
 };
 

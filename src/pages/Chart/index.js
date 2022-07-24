@@ -1,4 +1,4 @@
-import { Button, colors, Grid, Stack, Typography } from "@mui/material";
+import { Button, colors, Grid, Stack } from "@mui/material";
 import { Box } from "@mui/system";
 import React, { useEffect, useRef, useState } from "react";
 import MenuItem from "@mui/material/MenuItem";
@@ -19,10 +19,8 @@ import {
 import { readDataBase, writeDataBase } from "./lib/functions/dataBaseCRUD";
 import { contvertStringToTimestamp } from "./lib/functions/convertStringToTimeStamp";
 import { useContextApi } from "../../lib/hooks/useContexApi";
-
-import Lottie from "lottie-react";
-import emptyDataAnimation from "../../assets/animations/data-empty.json";
 import ButtonExportLayout from "./components/ButtonExportChart";
+import EmptyChartAnimation from "./components/EmptyChartAnimation";
 
 export default function Chart() {
   const [selectLayoutIndex, setSelectLayoutIndex] = useState(0);
@@ -143,10 +141,11 @@ export default function Chart() {
           <LocalizationProvider dateAdapter={AdapterDateFns}>
             <Stack
               direction="row"
-              height="80px"
               spacing={2}
+              flexWrap="wrap"
               sx={{
-                backgroundColor: changeThem ? "#001e3c" : "#FFF" ,
+                minHeight: "80px",
+                backgroundColor: changeThem ? "#001e3c" : "#FFF",
                 margin: "20px",
                 alignItems: "center",
                 padding: "10px",
@@ -206,7 +205,7 @@ export default function Chart() {
                 Search
               </Button>
               <ButtonExportLayout componentRef={printRef}>
-                Print
+                Export
               </ButtonExportLayout>
             </Stack>
           </LocalizationProvider>
@@ -238,23 +237,7 @@ export default function Chart() {
           </Grid>
         </>
       ) : (
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <Lottie
-            style={{ height: "300px", width: "300px" }}
-            animationData={emptyDataAnimation}
-            loop={false}
-          />
-          <Typography sx={{ fontWeight: "bold", color: colors.grey[500] }}>
-            Data empty
-          </Typography>
-        </div>
+        <EmptyChartAnimation />
       )}
     </Box>
   );

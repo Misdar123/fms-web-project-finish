@@ -13,6 +13,8 @@ import ListItemText from "@mui/material/ListItemText";
 import Checkbox from "@mui/material/Checkbox";
 import { useSelector } from "react-redux";
 
+import DeviceComponent from "../../../deviceComponent";
+
 import { updateDataBase } from "../../../../../../lib/function/dataBaseCRUD";
 import { useContextApi } from "../../../../../../lib/hooks/useContexApi";
 
@@ -22,11 +24,20 @@ export default function FormNewGroup({ openDialog, setOpenDialog }) {
   const [groupName, setGroupName] = useState("");
   const [checked, setChecked] = useState([]);
 
+  const updateListAllDevice = () => {
+    let newDevice = [...allDevice]
+    checked.forEach((value) => {
+      newDevice = newDevice.filter((device) => device.id !== value.id)
+    });
+    const path = `users/${currentUserId}/devices`
+    updateDataBase(path, newDevice)
+  };
+
   const creatGroup = () => {
-    const groupOld = groupDevice;
+    const oldGroup = groupDevice;
     const path = `users/${currentUserId}/groupDevices`;
     const data = { name: groupName, id: Date.now(), devices: checked };
-    updateDataBase(path, [...groupOld, data]);
+    updateDataBase(path, [...oldGroup, data]);
     setChecked([]);
   };
 
@@ -37,7 +48,7 @@ export default function FormNewGroup({ openDialog, setOpenDialog }) {
       return;
     }
     creatGroup();
-    // updateDevices();
+    updateListAllDevice()
     setOpenDialog(!openDialog);
     setGroupName("");
   };
@@ -98,15 +109,7 @@ export default function FormNewGroup({ openDialog, setOpenDialog }) {
                     disablePadding
                   >
                     <ListItemButton>
-                      <div
-                        style={{
-                          marginRight: "10px",
-                          width: "25px",
-                          height: "25px",
-                          backgroundColor: "dodgerblue",
-                          borderRadius: "5px",
-                        }}
-                      />
+                      <DeviceComponent deviceStyle={{marginRight: "5px"}}/>
                       <ListItemText id={labelId} primary={value.name} />
                     </ListItemButton>
                   </ListItem>
