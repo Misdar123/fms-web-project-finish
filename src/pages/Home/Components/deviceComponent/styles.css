@@ -24,12 +24,14 @@
     top: -12px;
     left: -3px;
     transform: rotate(45deg);
+    background-color: #ab30e4;
   }
   .top-right {
     position: absolute;
     top: -12px;
     right: -3px;
     transform: rotate(135deg);
+    background-color: #ff9925;
   }
 
   .bottom-left {
@@ -37,6 +39,7 @@
     bottom: -12px;
     left: -3px;
     transform: rotate(135deg);
+    background-color: #353535;
   }
   .bottom-right {
     position: absolute;

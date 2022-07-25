@@ -27,14 +27,13 @@ import { useContextApi } from "../../../../../../lib/hooks/useContexApi";
 
 const ListAllDevices = ({ onOpen, open }) => {
   const { currentUserId, deviceInGroups } = useContextApi();
-  const { allDevice } = useSelector((state) => state.devices);
-  const { userId } = useSelector((state) => state.user);
+  const { allDevice, groupDevice } = useSelector((state) => state.devices);
   const [openPopUp, setOpenPopUp] = useState(false);
-  const [dragItems, setDragItems] = useState(allDevice);
+  const [dragItems, setDragItems] = useState([]);
 
   const deleteDevice = (id) => {
     const result = allDevice.filter((device) => device.id !== id);
-    const path = `users/${userId}/devices`;
+    const path = `users/${currentUserId}/devices`;
     updateDataBase(path, result);
   };
 
@@ -42,17 +41,25 @@ const ListAllDevices = ({ onOpen, open }) => {
     setOpenPopUp(!openPopUp);
   };
 
+  // filter data by device group
   useEffect(() => {
-    if (deviceInGroups.length !== 0) {
-      let newDevice = allDevice;
-      deviceInGroups.forEach((device) => {
-        newDevice = newDevice.filter((value) => value.id !== device.id);
+    const deviceInGroup = [];
+    groupDevice.forEach((item) => {
+      if (item.devices !== undefined) {
+        deviceInGroup.push(...item.devices);
+      }
+    });
+
+    if (deviceInGroup.length !== 0) {
+      let result = allDevice;
+      deviceInGroup.forEach((device) => {
+        result = result.filter((value) => value.id !== device.id);
       });
-      setDragItems(newDevice);
+      setDragItems(result);
     } else {
       setDragItems(allDevice);
     }
-  }, []);
+  }, [allDevice, deviceInGroups]);
 
   return (
     <>
@@ -80,12 +87,18 @@ const ListAllDevices = ({ onOpen, open }) => {
                     <DialogTitle id="alert-dialog-title"></DialogTitle>
                     <DialogContent>
                       <DialogContentText id="alert-dialog-description">
-                        are you sure want to delete this device?
+                        Delete {data.name}
                       </DialogContentText>
                     </DialogContent>
                     <DialogActions>
                       <Button onClick={handlePopUp}>cancel</Button>
-                      <Button onClick={() => deleteDevice(data.id)} autoFocus>
+                      <Button
+                        onClick={() => {
+                          deleteDevice(data.id);
+                          handlePopUp();
+                        }}
+                        autoFocus
+                      >
                         ok
                       </Button>
                     </DialogActions>
@@ -93,7 +106,7 @@ const ListAllDevices = ({ onOpen, open }) => {
                 </div>
               ))
             ) : (
-              <ListNoResult title={"no devices"} />
+              <ListNoResult title={"Empty"} />
             )}
           </Stack>
         </List>

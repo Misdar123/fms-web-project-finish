@@ -80,9 +80,9 @@ const Cardontainer = styled("div")(({ theme }) => ({
 
 const Settings = () => {
   const { changeThem, setChangeThem } = useContextApi();
-  const [openThemSetting, setOpenThemSetting] = useState(true);
-  const [openDeviceSetting, setOpenDeviceSetting] = useState(true);
-  const [openProfileSetting, setOpenProfileSetting] = useState(true);
+  const [openThemSetting, setOpenThemSetting] = useState(false);
+  const [openDeviceSetting, setOpenDeviceSetting] = useState(false);
+  const [openProfileSetting, setOpenProfileSetting] = useState(false);
 
   const handleOpenThemSettings = () => {
     setOpenThemSetting(!openThemSetting);

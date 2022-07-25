@@ -35,7 +35,6 @@ import { blue } from "@mui/material/colors";
 function App() {
   const [isAuth, setIsAuth] = useState(false);
   const [currentUserId, setCurrentUserId] = useState("");
-  const [icons, setIcons] = useState([]);
   const [isDataAvaliable, setIsDataAvaliable] = useState(false);
   const [dropDevice, setDropDevice] = useState([]);
   const [isDisplayAlert, setIsDisplayAlert] = useState({
@@ -70,7 +69,6 @@ function App() {
       if (user?.emailVerified) {
         const path = "users/" + stringRegex(user.email);
         readDataBase(path, getDataFromDataBase);
-        readDataBase("icons/", setIcons);
         readDataBase("devices/", (data) => {
           dispatch(insertPublicDevice(data));
         });
@@ -112,7 +110,6 @@ function App() {
           isAuth,
           setIsAuth,
           currentUserId,
-          icons,
           isDisplayAlert,
           setIsDisplayAlert,
           dropDevice,

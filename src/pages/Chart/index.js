@@ -127,6 +127,56 @@ export default function Chart() {
     });
   };
 
+  const downloadData = (type) => {
+    const titles = allChartData.map((item) => item.sensorName);
+    const data = allChartData.map((item) => item.log);
+    let listData = [];
+
+    for (let i = 0; i < titles.length; i++) {
+      const sensorValue = [];
+      for (let j = 0; j < data[0].length; j++) {
+        sensorValue.push(data[i][j][titles[i]]);
+      }
+      listData.push(sensorValue);
+    }
+
+    // transform matrix of array
+
+    const transform = [];
+    for (let i = 0; i < listData[0].length; i++) {
+      const row = [];
+      for (let j = 0; j < listData.length; j++) {
+        row.push(listData[j][i]);
+      }
+      transform.push(row);
+    }
+
+    listData = transform;
+    listData.unshift(titles);
+
+    const element = document.createElement("a");
+
+    const file = new Blob([...listData.join("\n")], {
+      type: type,
+    });
+    element.href = URL.createObjectURL(file);
+    let fileExtention = "";
+    switch (type) {
+      case "txt":
+        fileExtention = "data.txt";
+        break;
+      case "csv":
+        fileExtention = "data.csv";
+        break;
+      default:
+        fileExtention = "data.xlsx";
+        break;
+    }
+    element.download = fileExtention;
+    document.body.appendChild(element);
+    element.click();
+  };
+
   return (
     <Box
       sx={{
@@ -204,9 +254,12 @@ export default function Chart() {
               <Button onClick={queryDataByDateTime} variant="outlined">
                 Search
               </Button>
-              <ButtonExportLayout componentRef={printRef}>
+              <Button onClick={downloadData} variant="outlined">
                 Export
-              </ButtonExportLayout>
+              </Button>
+              {/* <ButtonExportLayout componentRef={printRef}>
+                Export
+              </ButtonExportLayout> */}
             </Stack>
           </LocalizationProvider>
 

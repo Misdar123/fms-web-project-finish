@@ -24,14 +24,14 @@ export default function FormNewGroup({ openDialog, setOpenDialog }) {
   const [groupName, setGroupName] = useState("");
   const [checked, setChecked] = useState([]);
 
-  const updateListAllDevice = () => {
-    let newDevice = [...allDevice]
-    checked.forEach((value) => {
-      newDevice = newDevice.filter((device) => device.id !== value.id)
-    });
-    const path = `users/${currentUserId}/devices`
-    updateDataBase(path, newDevice)
-  };
+  // const updateListAllDevice = () => {
+  //   let newDevice = [...allDevice]
+  //   checked.forEach((value) => {
+  //     newDevice = newDevice.filter((device) => device.id !== value.id)
+  //   });
+  //   const path = `users/${currentUserId}/devices`
+  //   updateDataBase(path, newDevice)
+  // };
 
   const creatGroup = () => {
     const oldGroup = groupDevice;
@@ -48,7 +48,7 @@ export default function FormNewGroup({ openDialog, setOpenDialog }) {
       return;
     }
     creatGroup();
-    updateListAllDevice()
+    // updateListAllDevice()
     setOpenDialog(!openDialog);
     setGroupName("");
   };

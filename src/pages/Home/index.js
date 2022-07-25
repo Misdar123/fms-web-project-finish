@@ -400,6 +400,7 @@ const Home = () => {
         </IconButton>
         <FormControl>
           <Select
+           value={""}
             onChange={handleSelectDropDownShape}
             sx={{ height: "30px" }}
             displayEmpty
@@ -429,6 +430,7 @@ const Home = () => {
 
         <FormControl>
           <Select
+            value={""}
             onChange={handleSelectLineDropDown}
             sx={{ height: "30px", ml: 1 }}
             displayEmpty

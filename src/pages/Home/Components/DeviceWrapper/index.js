@@ -66,7 +66,6 @@ const DeviceWrapper = ({ children }) => {
           macAddress: value.macAddress,
           name: value.name,
           position: value.position,
-          icon: value.icon,
         };
         return result;
       });
