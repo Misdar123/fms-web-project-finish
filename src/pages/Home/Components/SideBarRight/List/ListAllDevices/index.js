@@ -10,10 +10,7 @@ import ExpandMore from "@mui/icons-material/ExpandMore";
 import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
 import { useSelector } from "react-redux";
 
-import {
-  readDataBase,
-  updateDataBase,
-} from "../../../../../../lib/function/dataBaseCRUD";
+import { updateDataBase } from "../../../../../../lib/function/dataBaseCRUD";
 import CardDrag from "../../../cardDrag";
 import ListNoResult from "../ListNoResult";
 

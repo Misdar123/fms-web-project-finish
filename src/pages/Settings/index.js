@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { styled } from "@mui/material/styles";
 import { useContextApi } from "../../lib/hooks/useContexApi";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Switch from "@mui/material/Switch";
 
-import { colors } from "@mui/material";
+import { colors, DialogContentText } from "@mui/material";
 import List from "@mui/material/List";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
@@ -21,6 +21,19 @@ import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import KeyIcon from "@mui/icons-material/Key";
 import ManageAccountsSharpIcon from "@mui/icons-material/ManageAccountsSharp";
 import CallSharpIcon from "@mui/icons-material/CallSharp";
+import { getAuth, sendPasswordResetEmail } from "firebase/auth";
+
+import {
+  Button,
+  TextField,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+} from "@mui/material";
+import { updateDataBase } from "../../lib/function/dataBaseCRUD";
+import { useSelector } from "react-redux";
+import PopUpDeviceProperties from "./components/PopUpDeviceProperties";
 
 const MaterialUISwitch = styled(Switch)(({ theme }) => ({
   width: 55,
@@ -79,10 +92,20 @@ const Cardontainer = styled("div")(({ theme }) => ({
 }));
 
 const Settings = () => {
-  const { changeThem, setChangeThem } = useContextApi();
+  const { currentUserId, changeThem, setChangeThem } = useContextApi();
+  const { user } = useSelector((state) => state.user);
+  const { allDevice } = useSelector((state) => state.devices);
+
   const [openThemSetting, setOpenThemSetting] = useState(false);
   const [openDeviceSetting, setOpenDeviceSetting] = useState(false);
   const [openProfileSetting, setOpenProfileSetting] = useState(false);
+  const [newUserName, setNewUserName] = useState("");
+
+  const [openDialogUserName, setOpenDialogUserName] = useState(false);
+  const [openDialogResetPassword, setOpenDialogResetPassword] = useState(false);
+
+  const [openPopUpDeviceProperties, setOpenPopUpDeviceProperties] =
+    useState(false);
 
   const handleOpenThemSettings = () => {
     setOpenThemSetting(!openThemSetting);
@@ -100,6 +123,39 @@ const Settings = () => {
     setChangeThem((them) => !them);
     localStorage.setItem("THEM", `${!changeThem}`);
   };
+
+  const handleUpdate = () => {
+    updateDataBase("users/" + currentUserId + "/userName", newUserName);
+  };
+
+  const handleDialogChangeUserName = () => {
+    setOpenDialogUserName(!openDialogUserName);
+  };
+
+  const handleDialogResetPassword = () => {
+    setOpenDialogResetPassword(!openDialogResetPassword);
+  };
+
+  const handleResetPassword = () => {
+    const auth = getAuth();
+    sendPasswordResetEmail(auth, user?.email)
+      .then(() => {
+        alert(`email has been sent to ${user?.email}`);
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        // ..
+      });
+  };
+
+  const handleOpenPopUpDeviceProperties = () => {
+    setOpenPopUpDeviceProperties(!openPopUpDeviceProperties);
+  };
+
+  useEffect(() => {
+    setNewUserName(user?.userName);
+  }, []);
 
   return (
     <div
@@ -128,7 +184,7 @@ const Settings = () => {
             <ListItemIcon>
               <ColorLensIcon />
             </ListItemIcon>
-            <ListItemText primary="Change Them" />
+            <ListItemText primary="Them" />
             {openThemSetting ? <ExpandLess /> : <ExpandMore />}
           </ListItemButton>
           <Collapse in={openThemSetting} timeout="auto" unmountOnExit>
@@ -162,14 +218,27 @@ const Settings = () => {
                 border: "1px solid #f3f3f3",
                 minHeight: "50px",
                 borderRadius: "5px",
-                marginBottom: "10px",
+                marginTop: "5px",
+                marginBottom: "5px",
                 padding: "10px",
               }}
             >
               <List component="div" disablePadding>
-                <ListItemButton>
-                  <DevicesRoundedIcon />
-                </ListItemButton>
+                {allDevice.map((data, index) => (
+                  <div key={index}>
+                    {/* dialog device properties */}
+
+                    <PopUpDeviceProperties
+                      openDialog={openPopUpDeviceProperties}
+                      setOpenDialog={setOpenPopUpDeviceProperties}
+                      data={data}
+                    />
+                    <ListItemButton onClick={handleOpenPopUpDeviceProperties}>
+                      <DevicesRoundedIcon />
+                      <ListItemText sx={{ pl: 2 }}>{data.name}</ListItemText>
+                    </ListItemButton>
+                  </div>
+                ))}
               </List>
             </div>
           </Collapse>
@@ -185,13 +254,19 @@ const Settings = () => {
           </ListItemButton>
           <Collapse in={openProfileSetting} timeout="auto" unmountOnExit>
             <List component="div" disablePadding>
-              <ListItemButton sx={{ pl: 5 }}>
+              <ListItemButton
+                sx={{ pl: 5 }}
+                onClick={handleDialogResetPassword}
+              >
                 <ListItemIcon>
                   <KeyIcon />
                 </ListItemIcon>
                 <ListItemText>Reset Password</ListItemText>
               </ListItemButton>
-              <ListItemButton sx={{ pl: 5 }}>
+              <ListItemButton
+                sx={{ pl: 5 }}
+                onClick={handleDialogChangeUserName}
+              >
                 <ListItemIcon>
                   <ManageAccountsSharpIcon />
                 </ListItemIcon>
@@ -207,6 +282,68 @@ const Settings = () => {
           </Collapse>
         </List>
       </Cardontainer>
+
+      {/* dialog reset password */}
+
+      <Dialog
+        open={openDialogResetPassword}
+        onClose={handleDialogResetPassword}
+      >
+        <DialogTitle>Reset Password</DialogTitle>
+        <DialogActions>
+          <Button
+            onClick={() => {
+              handleDialogResetPassword();
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={() => {
+              handleResetPassword();
+              handleDialogResetPassword();
+            }}
+          >
+            Reset
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* dialog change user name */}
+      <Dialog open={openDialogUserName} onClose={handleDialogChangeUserName}>
+        <DialogTitle>Edite Profile</DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
+            margin="dense"
+            id="name"
+            label="user name"
+            type="email"
+            fullWidth
+            variant="standard"
+            value={newUserName}
+            onChange={(e) => setNewUserName(e.target.value)}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => {
+              handleDialogChangeUserName();
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={() => {
+              handleDialogChangeUserName();
+              handleUpdate();
+              setNewUserName("");
+            }}
+          >
+            Change
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };

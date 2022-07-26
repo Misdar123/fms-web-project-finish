@@ -8,8 +8,8 @@ import DialogTitle from "@mui/material/DialogTitle";
 import { colors, IconButton, Stack, Typography } from "@mui/material";
 import { useSelector } from "react-redux";
 
-import { updateDataBase } from "../../../../../../lib/function/dataBaseCRUD";
-import { useContextApi } from "../../../../../../lib/hooks/useContexApi";
+import { updateDataBase } from "../../../lib/function/dataBaseCRUD";
+import { useContextApi } from "../../../lib/hooks/useContexApi";
 
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
@@ -23,7 +23,7 @@ import Modal from "@mui/material/Modal";
 import ExpandMoreOutlinedIcon from "@mui/icons-material/ExpandMoreOutlined";
 import ExpandLessOutlinedIcon from "@mui/icons-material/ExpandLessOutlined";
 
-function FormNewDevice({ openDialog, setOpenDialog }) {
+function PopUpDeviceProperties({ openDialog, setOpenDialog, data }) {
   const { currentUserId } = useContextApi();
   const { allDevice, publicDevice } = useSelector((state) => state.devices);
 
@@ -36,9 +36,7 @@ function FormNewDevice({ openDialog, setOpenDialog }) {
 
   const [isError, setIsError] = useState({ error: false, message: "" });
 
-  const [deviceProperties, setDeviceProperties] = useState([
-    { ID: Date.now(), modularIO: "", IOType: "", sensorType: "" },
-  ]);
+  const [deviceProperties, setDeviceProperties] = useState([]);
 
   const handleSubmit = () => {
     const oldDevices = allDevice;
@@ -99,6 +97,14 @@ function FormNewDevice({ openDialog, setOpenDialog }) {
     setOpenDeleteModal(false);
   };
 
+  useEffect(() => {
+    setDeviceName(data.name)
+    setMacAddress(data.macAddress)
+    setSendDataInterval(data.sendDataInterval)
+    const properties = [...data.properties]
+    setDeviceProperties(properties)
+  }, [])
+
   return (
     <div>
       <Dialog
@@ -133,6 +139,7 @@ function FormNewDevice({ openDialog, setOpenDialog }) {
           <TextField
             error={isError.error}
             helperText={isError.message}
+            disabled
             autoFocus
             margin="dense"
             id="Mac Address"
@@ -152,7 +159,7 @@ function FormNewDevice({ openDialog, setOpenDialog }) {
               send data interval :
             </Typography>
             <Slider
-              defaultValue={0}
+              defaultValue={data.sendDataInterval}
               aria-label="Default"
               valueLabelDisplay="auto"
               onChange={(e) => setSendDataInterval(e.target.value)}
@@ -205,13 +212,14 @@ function FormNewDevice({ openDialog, setOpenDialog }) {
                 }}
                 setDeviceProperties={setDeviceProperties}
                 deviceProperties={deviceProperties}
+                data={data}
               />
             </div>
           ))}
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpenDialog(!openDialog)}>Cancel</Button>
-          <Button onClick={handleSubmit}>Save</Button>
+          <Button onClick={handleSubmit}>Update</Button>
         </DialogActions>
       </Dialog>
     </div>
@@ -222,6 +230,7 @@ const DevicePropertiesComponent = ({
   handleDelete,
   deviceProperties,
   setDeviceProperties,
+  data,
 }) => {
   const [expandModularIO, setExpandModularIO] = useState(null);
   const [expandIOType, setExpandIOType] = useState(null);
@@ -241,6 +250,12 @@ const DevicePropertiesComponent = ({
   const handleAddProperties = () => {
     setDeviceProperties([...deviceProperties, newDeviceProperties]);
   };
+
+  useEffect(() => {
+    setModularIO(data.modularIO)
+    setIOType(data.IOType)
+    setSensorType(data.sensorType)
+  }, [])
 
   useEffect(() => {
     deviceProperties[deviceProperties.length - 1] = newDeviceProperties;
@@ -364,4 +379,4 @@ const DevicePropertiesComponent = ({
   );
 };
 
-export default FormNewDevice;
+export default PopUpDeviceProperties;

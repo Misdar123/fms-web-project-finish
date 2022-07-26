@@ -19,8 +19,9 @@ import {
 import { readDataBase, writeDataBase } from "./lib/functions/dataBaseCRUD";
 import { contvertStringToTimestamp } from "./lib/functions/convertStringToTimeStamp";
 import { useContextApi } from "../../lib/hooks/useContexApi";
-import ButtonExportLayout from "./components/ButtonExportChart";
 import EmptyChartAnimation from "./components/EmptyChartAnimation";
+
+import Menu from "@mui/material/Menu";
 
 export default function Chart() {
   const [selectLayoutIndex, setSelectLayoutIndex] = useState(0);
@@ -40,6 +41,16 @@ export default function Chart() {
   const [endDateTime, setEndDateTime] = useState(null);
 
   const printRef = useRef();
+
+  const [anchorEl, setAnchorEl] = useState(null);
+  const openMenu = Boolean(anchorEl);
+
+  const handleOpenMenuExport = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleCloseMenuExport = () => {
+    setAnchorEl(null);
+  };
 
   const getDataFromDataBase = () => {
     if (!layoutList[selectLayoutIndex]?.devices) return;
@@ -254,12 +265,45 @@ export default function Chart() {
               <Button onClick={queryDataByDateTime} variant="outlined">
                 Search
               </Button>
-              <Button onClick={downloadData} variant="outlined">
+              <Button onClick={handleOpenMenuExport} variant="outlined">
                 Export
               </Button>
-              {/* <ButtonExportLayout componentRef={printRef}>
-                Export
-              </ButtonExportLayout> */}
+              <Menu
+                id="basic-menu"
+                anchorEl={anchorEl}
+                open={openMenu}
+                onClose={handleCloseMenuExport}
+                MenuListProps={{
+                  "aria-labelledby": "basic-button",
+                }}
+              >
+                <MenuItem
+                  onClick={() => {
+                    downloadData("csv");
+                    handleCloseMenuExport();
+                  }}
+                >
+                  export as csv
+                </MenuItem>
+                <MenuItem
+                  onClick={() => {
+                    downloadData("txt");
+                    handleCloseMenuExport();
+                  }}
+                >
+                  export as txt
+                </MenuItem>
+                <MenuItem
+                  onClick={() => {
+                    downloadData(
+                      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                    );
+                    handleCloseMenuExport();
+                  }}
+                >
+                  export as xlsx
+                </MenuItem>
+              </Menu>
             </Stack>
           </LocalizationProvider>
 

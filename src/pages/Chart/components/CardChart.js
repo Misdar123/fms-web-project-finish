@@ -37,9 +37,6 @@ const CardChart = ({ data, title, sensorName, isShowAllSensors }) => {
       listData.push(Object.values(value));
     });
     listData.unshift(titles)
-    console.log(listData)
-    return
-
     const element = document.createElement("a");
 
     const file = new Blob([...listData.join("\n")], {
