@@ -4,7 +4,7 @@ import { useContextApi } from "../../lib/hooks/useContexApi";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Switch from "@mui/material/Switch";
 
-import { colors, DialogContentText } from "@mui/material";
+import { colors } from "@mui/material";
 import List from "@mui/material/List";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
@@ -33,7 +33,7 @@ import {
 } from "@mui/material";
 import { updateDataBase } from "../../lib/function/dataBaseCRUD";
 import { useSelector } from "react-redux";
-import PopUpDeviceProperties from "./components/PopUpDeviceProperties";
+import DeviceProperties from "./components/DeviceProperties";
 
 const MaterialUISwitch = styled(Switch)(({ theme }) => ({
   width: 55,
@@ -82,12 +82,12 @@ const MaterialUISwitch = styled(Switch)(({ theme }) => ({
   },
 }));
 
-const Cardontainer = styled("div")(({ theme }) => ({
+const CardContainer = styled("div")(({ theme }) => ({
   [theme.breakpoints.down("sm")]: {
     minWidth: "400px",
   },
   [theme.breakpoints.up("sm")]: {
-    minWidth: "500px",
+    minWidth: "600px",
   },
 }));
 
@@ -103,9 +103,6 @@ const Settings = () => {
 
   const [openDialogUserName, setOpenDialogUserName] = useState(false);
   const [openDialogResetPassword, setOpenDialogResetPassword] = useState(false);
-
-  const [openPopUpDeviceProperties, setOpenPopUpDeviceProperties] =
-    useState(false);
 
   const handleOpenThemSettings = () => {
     setOpenThemSetting(!openThemSetting);
@@ -149,9 +146,6 @@ const Settings = () => {
       });
   };
 
-  const handleOpenPopUpDeviceProperties = () => {
-    setOpenPopUpDeviceProperties(!openPopUpDeviceProperties);
-  };
 
   useEffect(() => {
     setNewUserName(user?.userName);
@@ -167,7 +161,7 @@ const Settings = () => {
         justifyContent: "center",
       }}
     >
-      <Cardontainer>
+      <CardContainer>
         <List
           sx={{ width: "100%", bgcolor: "background.paper" }}
           component="nav"
@@ -211,36 +205,11 @@ const Settings = () => {
             {openDeviceSetting ? <ExpandLess /> : <ExpandMore />}
           </ListItemButton>
           <Collapse in={openDeviceSetting} timeout="auto" unmountOnExit>
-            <div
-              style={{
-                marginLeft: "50px",
-                marginRight: "25px",
-                border: "1px solid #f3f3f3",
-                minHeight: "50px",
-                borderRadius: "5px",
-                marginTop: "5px",
-                marginBottom: "5px",
-                padding: "10px",
-              }}
-            >
-              <List component="div" disablePadding>
-                {allDevice.map((data, index) => (
-                  <div key={index}>
-                    {/* dialog device properties */}
-
-                    <PopUpDeviceProperties
-                      openDialog={openPopUpDeviceProperties}
-                      setOpenDialog={setOpenPopUpDeviceProperties}
-                      data={data}
-                    />
-                    <ListItemButton onClick={handleOpenPopUpDeviceProperties}>
-                      <DevicesRoundedIcon />
-                      <ListItemText sx={{ pl: 2 }}>{data.name}</ListItemText>
-                    </ListItemButton>
-                  </div>
-                ))}
-              </List>
-            </div>
+            <List component="div" disablePadding>
+              {allDevice.map((data, index) => (
+                <DeviceProperties data={data} key={index} />
+              ))}
+            </List>
           </Collapse>
 
           {/* profile setting */}
@@ -281,7 +250,7 @@ const Settings = () => {
             </List>
           </Collapse>
         </List>
-      </Cardontainer>
+      </CardContainer>
 
       {/* dialog reset password */}
 

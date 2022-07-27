@@ -60,31 +60,25 @@ const DeviceWrapper = ({ children }) => {
   useEffect(() => {
     const layouts = [...layoutList];
 
-    const extracData = () => {
-      return dropItems.map((value) => {
-        const result = {
-          macAddress: value.macAddress,
-          name: value.name,
-          position: value.position,
-        };
-        return result;
-      });
-    };
-    if (extracData().length === 0 || dropItems.length === 0) return;
+    if (dropItems.length === 0) return;
 
     const indexOfAllLayout = layouts.map((layout) => layout.id);
     const indexLayout = indexOfAllLayout.indexOf(newLayoutData.id);
 
     if (indexLayout === -1) {
-      const data = { ...newLayoutData, devices: extracData() };
+
+      const data = { ...newLayoutData, devices: dropItems };
       const path = `users/${currentUserId}/layouts/`;
       updateDataBase(path, [...layouts, data]);
+
     } else {
       let layoutTarget = layouts.find(
         (layout) => layout.id === newLayoutData.id
       );
-      layoutTarget = { ...newLayoutData, devices: extracData() };
+
+      layoutTarget = { ...newLayoutData, devices: dropItems };
       layouts[indexLayout] = layoutTarget;
+
       const path = `users/${currentUserId}/layouts/`;
       updateDataBase(path, layouts);
     }
@@ -94,13 +88,16 @@ const DeviceWrapper = ({ children }) => {
     if (Array.isArray(newLayoutData?.devices)) {
       // find refrence drop item device in all device collections
       const deviceRefrence = [];
+
       newLayoutData.devices.forEach((device) => {
         const findDeviceRefrence = allDevice.filter(
           (deviceItem) => deviceItem.macAddress === device.macAddress
         );
         deviceRefrence.push(...findDeviceRefrence);
       });
+
       setDropItems(deviceRefrence);
+      
     } else {
       setDropItems([]);
     }

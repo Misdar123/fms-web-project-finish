@@ -50,6 +50,10 @@ function App() {
 
   const [deviceInGroups, setDeviceInGroups] = useState([]);
 
+  const [deviceAlreadyUsedInLayout, setDeviceAlreadyUsedInLayout] = useState(
+    []
+  );
+
   const them = JSON.parse(localStorage.getItem("THEM"));
   const [changeThem, setChangeThem] = useState(them);
 
@@ -128,6 +132,8 @@ function App() {
           setChangeThem,
           deviceInGroups,
           setDeviceInGroups,
+          deviceAlreadyUsedInLayout,
+          setDeviceAlreadyUsedInLayout,
         }}
       >
         <DndProvider backend={HTML5Backend}>

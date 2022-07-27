@@ -31,22 +31,10 @@ const ListLayouts = ({ open, onOpen }) => {
   const dispatch = useDispatch();
 
   const [openPopUp, setOpenPopUp] = useState(false);
-
-  const [anchorEl, setAnchorEl] = useState(null);
-  const openMenu = Boolean(anchorEl);
-
-  const handleOpenMenu = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleCloseMenu = () => {
-    setAnchorEl(null);
-  };
-
+  
   const handleOnClick = (index) => {
     dispatch(setIndexLayout(index));
     setSelectIndexLayout(index);
-    dispatch(addDeviceDelete(null));
   };
 
   const handlePopUp = () => {
@@ -59,7 +47,6 @@ const ListLayouts = ({ open, onOpen }) => {
     );
     const path = `users/${userId}/layouts/`;
     updateDataBase(path, newLayouts);
-    handleCloseMenu();
     dispatch(setIndexLayout(0));
   };
 
@@ -81,7 +68,6 @@ const ListLayouts = ({ open, onOpen }) => {
                   <IconButton
                     sx={{ mr: 2 }}
                     onClick={(e) => {
-                      // handleOpenMenu(e);
                       handlePopUp();
                       handleOnClick(index);
                     }}
@@ -118,27 +104,6 @@ const ListLayouts = ({ open, onOpen }) => {
                       </Button>
                     </DialogActions>
                   </Dialog>
-
-                  {/* <Menu
-                    id="basic-menu"
-                    anchorEl={anchorEl}
-                    open={openMenu}
-                    onClose={handleCloseMenu}
-                    MenuListProps={{
-                      "aria-labelledby": "basic-button",
-                    }}
-                  >
-                    <List>
-                      <ListItemButton onClick={handleDeletLayout}>
-                        <ListItemIcon>
-                          <DeleteIcon />
-                        </ListItemIcon>
-                        <ListItemText
-                          primary={`delete ${layoutList[selectIndexLayout]?.name}`}
-                        />
-                      </ListItemButton>
-                    </List>
-                  </Menu> */}
                 </Stack>
               </ListItem>
             ))

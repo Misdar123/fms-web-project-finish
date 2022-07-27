@@ -77,6 +77,8 @@ const Home = () => {
   const [undoShapes, setUndoShapes] = useState([]);
   const [redoShapes, setRedoShapes] = useState([]);
 
+  const [selectShapeDelete, setSelectShapeDelete] = useState({});
+
   const stageEl = createRef();
   const layerEl = createRef();
   const fileUploadEl = createRef();
@@ -93,7 +95,7 @@ const Home = () => {
       () => {
         const generateId = Date.now() + "";
         const imageProperties = {
-          content: reader.result,
+          content: reader.shapesSelected,
           id: generateId,
           name: "image",
         };
@@ -327,34 +329,47 @@ const Home = () => {
   };
 
   // delete shape on key press
-  // useEffect(() => {
-  //   const handleDeleteShape = (e) => {
-  //     if (e.key === "Backspace") {
-  //       const result = JSON.parse(localStorage.getItem("@shape_key"));
-  //       if (result === null) return;
-  //       switch (result.name) {
-  //         case "rectangle":
-  //           const newRectangle = rectangles.filter((rect) => {
-  //             return parseInt(rect.id) !== parseInt(result.id);
-  //           });
-  //           if (newRectangle.length !== 0) {
-  //             setRectangles(newRectangle);
-  //           }
-  //           break;
-  //         case "circle":
-  //           const newCircle = circles.filter((circle) => {
-  //             return parseInt(circle.id) !== parseInt(result.id);
-  //           });
-  //           setCircles(newCircle);
-  //           break;
-  //         default:
-  //           break;
-  //       }
-  //     }
-  //   };
-  //   window.addEventListener("keydown", handleDeleteShape);
-  //   return () => window.removeEventListener("keydown", handleDeleteShape);
-  // }, []);
+
+  useEffect(() => {
+    const handleDeleteShape = (e) => {
+      if (e.key === "Backspace") {
+        const deletedShape = JSON.parse(localStorage.getItem("DELETE-SHAPE"));
+        switch (deletedShape.name) {
+          case "rectangle":
+            const indexOfRectangles = rectangles.map((rect) => rect.id);
+            const indexOfRectangleTarget = indexOfRectangles.indexOf(
+              deletedShape.id
+            );
+            const newRectangles = [...rectangles];
+            newRectangles.splice(indexOfRectangleTarget, 0);
+            setRectangles(newRectangles);
+
+            // const newRectangle = rectangles.filter((rect) => {
+            //   return rect.id !== deletedShape.id;
+            // });
+            // if (newRectangle.length !== 0) {
+            //   setRectangles(newRectangle);
+            // }
+            break;
+          case "circle":
+            const indexOfCircle = circles.map((circle) => circle.id);
+            const indexOfCircleTarget = indexOfCircle.indexOf(deletedShape.id);
+            const newCircle = [...circles];
+            newCircle.splice(indexOfCircleTarget, 0);
+            setCircles(newCircle);
+            // const newCircle = circles.filter((circle) => {
+            //   return circle.id !== deletedShape.id;
+            // });
+            // setCircles(newCircle);
+            break;
+          default:
+            break;
+        }
+      }
+    };
+    window.addEventListener("keydown", handleDeleteShape);
+    return () => window.removeEventListener("keydown", handleDeleteShape);
+  }, []);
 
   const handleSetIndexLayout = (event) => {
     setSelecIndexOfLayout(event.target.value);
@@ -400,7 +415,7 @@ const Home = () => {
         </IconButton>
         <FormControl>
           <Select
-           value={""}
+            value={""}
             onChange={handleSelectDropDownShape}
             sx={{ height: "30px" }}
             displayEmpty
@@ -532,6 +547,7 @@ const Home = () => {
                       isSelected={text.id === shapesSelected?.id}
                       onSelect={() => {
                         handleSelecShape(text);
+                        setSelectShapeDelete(text);
                       }}
                       onChange={(newAttrs) => {
                         const texts = textDraw.slice();
@@ -550,6 +566,10 @@ const Home = () => {
                       isSelected={rect.id === shapesSelected?.id}
                       onSelect={() => {
                         handleSelecShape(rect);
+                        localStorage.setItem(
+                          "DELETE-SHAPE",
+                          JSON.stringify(rect)
+                        );
                       }}
                       onChange={(newAttrs) => {
                         const rects = rectangles.slice();
@@ -568,6 +588,7 @@ const Home = () => {
                       isSelected={circle.id === shapesSelected?.id}
                       onSelect={() => {
                         handleSelecShape(circle);
+                        setSelectShapeDelete(circle);
                       }}
                       onChange={(newAttrs) => {
                         const circs = circles.slice();
@@ -585,6 +606,7 @@ const Home = () => {
                       isSelected={image.id === shapesSelected?.id}
                       onSelect={() => {
                         handleSelecShape(image);
+                        setSelectShapeDelete(image);
                       }}
                       onChange={(newAttrs) => {
                         const imgs = images.slice();

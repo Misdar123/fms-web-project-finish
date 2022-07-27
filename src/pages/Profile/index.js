@@ -44,12 +44,11 @@ const MyProfile = () => {
             </ListItemIcon>
             <ListItemText primary={user?.email} />
           </ListItemButton>
-
           <ListItemButton>
             <ListItemIcon>
               <LocalPhoneIcon />
             </ListItemIcon>
-            <ListItemText primary="+6283-3322-3223-0231" />
+            <ListItemText primary="+62813-1678-3223" />
           </ListItemButton>
         </List>
       </Card>

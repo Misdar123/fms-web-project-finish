@@ -12,6 +12,7 @@
     background-color: dodgerblue;
     overflow: hidden;
     border-radius: 10px;
+    cursor: pointer;
   }
 
   .cornor {

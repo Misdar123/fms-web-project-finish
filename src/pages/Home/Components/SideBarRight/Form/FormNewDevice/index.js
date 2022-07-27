@@ -205,6 +205,7 @@ function FormNewDevice({ openDialog, setOpenDialog }) {
                 }}
                 setDeviceProperties={setDeviceProperties}
                 deviceProperties={deviceProperties}
+                index={index}
               />
             </div>
           ))}
@@ -222,6 +223,7 @@ const DevicePropertiesComponent = ({
   handleDelete,
   deviceProperties,
   setDeviceProperties,
+  index,
 }) => {
   const [expandModularIO, setExpandModularIO] = useState(null);
   const [expandIOType, setExpandIOType] = useState(null);
@@ -243,7 +245,7 @@ const DevicePropertiesComponent = ({
   };
 
   useEffect(() => {
-    deviceProperties[deviceProperties.length - 1] = newDeviceProperties;
+    deviceProperties[index] = newDeviceProperties;
     setDeviceProperties(deviceProperties);
   }, [modularIO, IOType, sensorType]);
 

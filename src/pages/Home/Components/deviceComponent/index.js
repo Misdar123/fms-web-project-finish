@@ -9,12 +9,12 @@ const DeviceComponent = ({
   deviceStyle,
 }) => {
   return (
-    <div class="shadow" style={deviceStyle}>
-      <div class="container">
-        <div class="cornor top-left"></div>
-        <div class="cornor top-right"></div>
-        <div class="cornor bottom-left"></div>
-        <div class="cornor bottom-right"></div>
+    <div className="shadow" style={deviceStyle}>
+      <div className="container">
+        <div className="cornor top-left"></div>
+        <div className="cornor top-right"></div>
+        <div className="cornor bottom-left"></div>
+        <div className="cornor bottom-right"></div>
       </div>
     </div>
   );
