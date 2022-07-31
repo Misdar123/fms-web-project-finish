@@ -349,21 +349,39 @@ const DevicePropertiesComponent = ({
 
       {expandIOType && (
         <Stack spacing={1} direction="row" mt={2} alignItems="center">
-          <FormControl fullWidth>
-            <InputLabel id="demo-simple-select-label">sensor type</InputLabel>
-            <Select
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
-              value={sensorType}
-              label="Sensor Type"
-              onChange={handleChangeSensorType}
-            >
-              <MenuItem value={"Temperature"}>Temperature</MenuItem>
-              <MenuItem value={"Humidity"}>Humidity</MenuItem>
-              <MenuItem value={"Vibration"}>Vibration</MenuItem>
-              <MenuItem value={"Presure"}>Presure</MenuItem>
-            </Select>
-          </FormControl>
+          {modularIO === "Input" ? (
+            <FormControl fullWidth>
+              <InputLabel id="demo-simple-select-label">sensor type</InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                value={sensorType}
+                label="Sensor Type"
+                onChange={handleChangeSensorType}
+              >
+                <MenuItem value={"Temperature"}>Temperature</MenuItem>
+                <MenuItem value={"Humidity"}>Humidity</MenuItem>
+                <MenuItem value={"Vibration"}>Vibration</MenuItem>
+                <MenuItem value={"Presure"}>Presure</MenuItem>
+              </Select>
+            </FormControl>
+          ) : (
+            <FormControl fullWidth>
+              <InputLabel id="demo-simple-select-label">sensor type</InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                value={sensorType}
+                label="Sensor Type"
+                onChange={handleChangeSensorType}
+              >
+                <MenuItem value={"Lamp"}>Lamp</MenuItem>
+                <MenuItem value={"Fan"}>Fan</MenuItem>
+                <MenuItem value={"Buzzer"}>Buzzer</MenuItem>
+                <MenuItem value={"LED"}>LED</MenuItem>
+              </Select>
+            </FormControl>
+          )}
         </Stack>
       )}
     </Stack>
