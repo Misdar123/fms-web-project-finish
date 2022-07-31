@@ -108,7 +108,7 @@ const ListLayouts = ({ open, onOpen }) => {
               </ListItem>
             ))
           ) : (
-            <ListNoResult title="belum ada layout" />
+            <ListNoResult title="empty" />
           )}
         </List>
       </Collapse>

@@ -3,12 +3,13 @@ import { Divider, Stack } from "@mui/material";
 import DesignBoard from "./DesignBoard";
 import DevicesBoard from "./DevicesBoard";
 
-import { styled, useTheme } from "@mui/material/styles";
+import { styled } from "@mui/material/styles";
 import MuiDrawer from "@mui/material/Drawer";
 import IconButton from "@mui/material/IconButton";
 import CloseSharpIcon from "@mui/icons-material/CloseSharp";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import LockOpenOutlinedIcon from "@mui/icons-material/LockOpenOutlined";
 
 import List from "@mui/material/List";
 import Tabs from "@mui/material/Tabs";
@@ -70,6 +71,7 @@ const SideBarRight = ({ printComponentRef }) => {
   const isMediumScreen = useMediaQuery((theme) => theme.breakpoints.up("md"));
   const [tab, setTab] = useState(0);
   const [openDrawer, setOpenDrawer] = useState(true);
+  const [isDrawLock, setIsDrawLock] = useState(false);
 
   const handleSelectTab = (event, newValue) => {
     setTab(newValue);
@@ -77,6 +79,16 @@ const SideBarRight = ({ printComponentRef }) => {
 
   const handleOpenDrawer = () => {
     setOpenDrawer(!openDrawer);
+  };
+
+  window.onclick = () => {
+    if (isDrawLock) {
+      handleOpenDrawer();
+    }
+  };
+
+  const handleLockDrawer = () => {
+    setIsDrawLock(!isDrawLock);
   };
 
   useEffect(() => {
@@ -94,11 +106,22 @@ const SideBarRight = ({ printComponentRef }) => {
             <ChevronLeftIcon fontSize="large" />
           </IconButton>
         )}
-        <Stack direction="row" alignItems="center" spacing={3}>
+        <Stack direction="row" alignItems="center" spacing={0.5}>
           {openDrawer && (
-            <IconButton onClick={handleOpenDrawer}>
-              <CloseSharpIcon />
-            </IconButton>
+            <>
+              <IconButton onClick={handleOpenDrawer} disabled={isDrawLock}>
+                <CloseSharpIcon />
+              </IconButton>
+              {isDrawLock ? (
+                <IconButton onClick={handleLockDrawer}>
+                  <LockOpenOutlinedIcon />
+                </IconButton>
+              ) : (
+                <IconButton onClick={handleLockDrawer}>
+                  <LockOutlinedIcon sx={{ color: "red" }} />
+                </IconButton>
+              )}
+            </>
           )}
           {openDrawer && (
             <Tabs value={tab} onChange={handleSelectTab} centered>

@@ -1,5 +1,5 @@
 import { Button, Card, CardContent, Stack, Typography } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   AreaChart,
   Area,
@@ -11,14 +11,33 @@ import {
 } from "recharts";
 import DownloadRoundedIcon from "@mui/icons-material/DownloadRounded";
 import { useContextApi } from "../../../lib/hooks/useContexApi";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
+import { useSelector } from "react-redux";
 
 const CardChart = ({ data, title, sensorName, isShowAllSensors }) => {
   const { changeThem } = useContextApi();
   const bgColor = changeThem ? "#001e3c" : "#fff";
   const colorThem = changeThem ? "#FFF" : "#000";
+
+  const { user } = useSelector((state) => state.user);
+
+  const isSmallBreakPoint = useMediaQuery((theme) =>
+    theme.breakpoints.down("sm")
+  );
+
+  let chartWidth = 0;
+  let chartHeight = 0;
+
+  if (isSmallBreakPoint) {
+    chartWidth = 250;
+    chartHeight = 150;
+  } else {
+    chartWidth = isShowAllSensors ? 400 : window.innerWidth - 200;
+    chartHeight = isShowAllSensors ? 300 : window.innerHeight - 350;
+  }
 
   const [anchorEl, setAnchorEl] = useState(null);
   const openMenu = Boolean(anchorEl);
@@ -36,23 +55,29 @@ const CardChart = ({ data, title, sensorName, isShowAllSensors }) => {
     data.forEach((value) => {
       listData.push(Object.values(value));
     });
-    listData.unshift(titles)
+    listData.unshift(titles);
     const element = document.createElement("a");
 
     const file = new Blob([...listData.join("\n")], {
       type: type,
     });
+
+    const dateTime = new Date();
+    const fileName = `${
+      user?.userName
+    }_${dateTime.toDateString()}_${dateTime.getHours()}_${dateTime.getMinutes()}_${dateTime.getSeconds()}`;
+
     element.href = URL.createObjectURL(file);
     let fileExtention = "";
     switch (type) {
       case "txt":
-        fileExtention = "data.txt";
+        fileExtention = `${fileName}.txt`;
         break;
       case "csv":
-        fileExtention = "data.csv";
+        fileExtention = `${fileName}.csv`;
         break;
       default:
-        fileExtention = "data.xlsx";
+        fileExtention = `${fileName}.xlsx`;
         break;
     }
     element.download = fileExtention;
@@ -84,12 +109,13 @@ const CardChart = ({ data, title, sensorName, isShowAllSensors }) => {
         </div>
       );
     }
-
     return null;
   };
 
   return (
-    <Card sx={{ minWidth: 300, mb: 1, backgroundColor: bgColor }}>
+    <Card
+      sx={{ minWidth: { xs: 90, sm: 270 }, mb: 1, backgroundColor: bgColor }}
+    >
       <CardContent>
         <Menu
           id="basic-menu"
@@ -143,14 +169,14 @@ const CardChart = ({ data, title, sensorName, isShowAllSensors }) => {
           </Stack>
         </Stack>
         <AreaChart
-          width={isShowAllSensors ? 400 : window.innerWidth - 200}
-          height={isShowAllSensors ? 300 : window.innerHeight - 350}
+          width={chartWidth}
+          height={chartHeight}
           data={data}
           margin={{
-            top: 5,
-            right: 2,
-            left: 2,
-            bottom: 20,
+            top: isSmallBreakPoint ? 2 : 5,
+            right: isSmallBreakPoint ? 0 : 2,
+            left: isSmallBreakPoint ? 0 : 2,
+            bottom: isSmallBreakPoint ? 5 : 20,
           }}
         >
           <defs>
@@ -171,7 +197,7 @@ const CardChart = ({ data, title, sensorName, isShowAllSensors }) => {
           <XAxis
             dataKey="createdAt"
             label={{
-              value: "Time",
+              value: isSmallBreakPoint ? "" : "Time",
               position: "bottom",
               fill: colorThem,
             }}

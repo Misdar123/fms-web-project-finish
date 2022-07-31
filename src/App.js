@@ -1,4 +1,4 @@
-import { onAuthStateChanged } from "firebase/auth";
+import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 import { useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { auth } from "./lib/config/firebase";
@@ -92,16 +92,37 @@ function App() {
     },
   });
 
-  // useEffect(() => {
-  //   const path = `users/${currentUserId}/groupDevices`;
-  //   readDataBase(path, (result) => {
-  //     const devices = [];
-  //     result
-  //       .map((value) => value.devices)
-  //       .forEach((data) => data !== undefined && devices.push(...data));
-  //     setDeviceInGroups(devices);
-  //   });
-  // }, []);
+  const handleLogout = () => {
+    const auth = getAuth();
+    localStorage.clear();
+    setChangeThem(false);
+    signOut(auth).then(() => {
+      setIsAuth(false);
+    });
+  };
+
+
+  document.addEventListener("mousemove", () =>{ 
+    localStorage.setItem('lastActvity', new Date())
+  });
+  document.addEventListener("click", () =>{ 
+    localStorage.setItem('lastActvity', new Date())
+  });
+  
+
+  let timeInterval = setInterval(() => {
+  let lastAcivity = localStorage.getItem('lastActvity')
+  let diffMs = Math.abs(new Date(lastAcivity) - new Date());
+  let seconds = Math.floor((diffMs/1000));
+  let minute = Math.floor((seconds/60));
+  // console.log(seconds +' sec and '+minute+' min since last activity')
+  if(minute == 30){
+    handleLogout()
+    console.log('No activity, logout')
+    clearInterval(timeInterval)
+  }
+
+},1000)
 
   if (!isDataAvaliable) {
     return <LoadingPage />;

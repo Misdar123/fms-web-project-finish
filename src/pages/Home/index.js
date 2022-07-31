@@ -34,7 +34,6 @@ import { PencilDraw } from "./Components/Drawer/PencilDraw";
 import DrawRectangle from "./Components/Drawer/DrawRectangle";
 import ImgPicker from "./Components/ImagePicker";
 import InsertPhotoIcon from "@mui/icons-material/InsertPhoto";
-import { addTextNode } from "./Components/Drawer/addTextNode";
 import TextFieldsIcon from "@mui/icons-material/TextFields";
 import { selectedShape } from "../../redux/features/drawSlice";
 import DeviceWrapper from "./Components/DeviceWrapper";
@@ -47,6 +46,8 @@ import { setIndexLayout } from "../../redux/features/layoutSlice";
 import TextDraw from "./Components/Drawer/TextDraw";
 
 import EmptyLayoutAnimation from "./Components/EmptyLayoutAnimation";
+
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 const Home = () => {
   const {
@@ -67,11 +68,16 @@ const Home = () => {
   const { shapesSelected } = useSelector((state) => state.drawer);
   const { userId } = useSelector((state) => state.user);
 
+  const isSmallBreakPoint = useMediaQuery((theme) =>
+    theme.breakpoints.down("sm")
+  );
+
   const printComponentRef = useRef(null);
   const dispatch = useDispatch();
 
-  const [openScreenCreatNewLayout, setOpenScreenCreatNewLayout] =
-    useState(false);
+  const [openScreenCreatNewLayout, setOpenScreenCreatNewLayout] = useState(
+    false
+  );
   const [selecIndexOfLayout, setSelecIndexOfLayout] = useState(0);
 
   const [undoShapes, setUndoShapes] = useState([]);
@@ -406,7 +412,7 @@ const Home = () => {
         sx={{
           border: changeThem ? "none" : "1px solid #e3e3e3",
           padding: "2px",
-          minWidth: { xs: "400px", sm: "500px" },
+          width: { xs: "280px", sm: "600px" },
           maxWidth: "600px",
         }}
       >

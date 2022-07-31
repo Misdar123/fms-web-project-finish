@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Dialog from "@mui/material/Dialog";
@@ -62,16 +62,22 @@ function FormNewDevice({ openDialog, setOpenDialog }) {
       return;
     }
 
-    deviceProperties.forEach((device) => {
-      if (
-        device.modularIO === "" ||
-        device.IOType === "" ||
-        device.sensorType === ""
-      ) {
-        alert("device properties can't empty");
-        return;
-      }
-    });
+    const checkIsDevicePropertiesEmpty = () => {
+      let result = false;
+      deviceProperties.forEach((device) => {
+        if (
+          device.modularIO === "" ||
+          device.IOType === "" ||
+          device.sensorType === ""
+        ) {
+          alert("device properties can't empty");
+          result = true;
+        }
+      });
+      return result;
+    };
+
+    if (checkIsDevicePropertiesEmpty() || deviceProperties.length === 0) return;
 
     const path = `users/${currentUserId}/devices`;
     const data = {
@@ -224,6 +230,7 @@ const DevicePropertiesComponent = ({
   deviceProperties,
   setDeviceProperties,
   index,
+  dialogRef,
 }) => {
   const [expandModularIO, setExpandModularIO] = useState(null);
   const [expandIOType, setExpandIOType] = useState(null);
@@ -279,8 +286,7 @@ const DevicePropertiesComponent = ({
       }}
     >
       <Stack spacing={1} direction="row" alignItems="center">
-        <Typography sx={{ width: "80px" }}>Modular I/O </Typography>
-        <FormControl sx={{ minWidth: "280px" }}>
+        <FormControl fullWidth>
           <InputLabel id="demo-simple-select-label">modular type</InputLabel>
           <Select
             labelId="demo-simple-select-label"
@@ -325,8 +331,7 @@ const DevicePropertiesComponent = ({
 
       {expandModularIO && (
         <Stack spacing={1} direction="row" mt={2} alignItems="center">
-          <Typography sx={{ width: "80px" }}>I/O Type :</Typography>
-          <FormControl sx={{ minWidth: "280px" }}>
+          <FormControl fullWidth>
             <InputLabel id="demo-simple-select-label">IO Type</InputLabel>
             <Select
               labelId="demo-simple-select-label"
@@ -344,8 +349,7 @@ const DevicePropertiesComponent = ({
 
       {expandIOType && (
         <Stack spacing={1} direction="row" mt={2} alignItems="center">
-          <Typography sx={{ width: "80px" }}>Sensor Type</Typography>
-          <FormControl sx={{ minWidth: "280px" }}>
+          <FormControl fullWidth>
             <InputLabel id="demo-simple-select-label">sensor type</InputLabel>
             <Select
               labelId="demo-simple-select-label"

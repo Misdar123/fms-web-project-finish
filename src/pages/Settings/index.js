@@ -35,6 +35,12 @@ import { updateDataBase } from "../../lib/function/dataBaseCRUD";
 import { useSelector } from "react-redux";
 import DeviceProperties from "./components/DeviceProperties";
 
+import Accordion from "@mui/material/Accordion";
+import AccordionSummary from "@mui/material/AccordionSummary";
+import AccordionDetails from "@mui/material/AccordionDetails";
+import Typography from "@mui/material/Typography";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+
 const MaterialUISwitch = styled(Switch)(({ theme }) => ({
   width: 55,
   height: 27,
@@ -84,7 +90,10 @@ const MaterialUISwitch = styled(Switch)(({ theme }) => ({
 
 const CardContainer = styled("div")(({ theme }) => ({
   [theme.breakpoints.down("sm")]: {
-    minWidth: "400px",
+    width: "285px",
+  },
+  [theme.breakpoints.up("sm")]: {
+    width: "450px",
   },
   [theme.breakpoints.up("sm")]: {
     minWidth: "600px",
@@ -99,7 +108,7 @@ const Settings = () => {
   const [openThemSetting, setOpenThemSetting] = useState(false);
   const [openDeviceSetting, setOpenDeviceSetting] = useState(false);
   const [openProfileSetting, setOpenProfileSetting] = useState(false);
-  const [newUserName, setNewUserName] = useState("");
+  const [newUserName, setNewUserName] = useState(user?.userName);
 
   const [openDialogUserName, setOpenDialogUserName] = useState(false);
   const [openDialogResetPassword, setOpenDialogResetPassword] = useState(false);
@@ -146,11 +155,6 @@ const Settings = () => {
       });
   };
 
-
-  useEffect(() => {
-    setNewUserName(user?.userName);
-  }, []);
-
   return (
     <div
       style={{
@@ -178,11 +182,11 @@ const Settings = () => {
             <ListItemIcon>
               <ColorLensIcon />
             </ListItemIcon>
-            <ListItemText primary="Them" />
+            <ListItemText primary="Theme" />
             {openThemSetting ? <ExpandLess /> : <ExpandMore />}
           </ListItemButton>
           <Collapse in={openThemSetting} timeout="auto" unmountOnExit>
-            <List component="div" disablePadding>
+            <List component="div">
               <ListItemButton sx={{ pl: 5 }}>
                 <ListItemIcon>
                   <FormControlLabel
@@ -205,9 +209,20 @@ const Settings = () => {
             {openDeviceSetting ? <ExpandLess /> : <ExpandMore />}
           </ListItemButton>
           <Collapse in={openDeviceSetting} timeout="auto" unmountOnExit>
-            <List component="div" disablePadding>
+            <List component="div" sx={{ pl: 5 }}>
               {allDevice.map((data, index) => (
-                <DeviceProperties data={data} key={index} />
+                <Accordion key={index}>
+                  <AccordionSummary
+                    expandIcon={<ExpandMoreIcon />}
+                    aria-controls="panel1a-content"
+                    id="panel1a-header"
+                  >
+                    <Typography>{data.name}</Typography>
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    <DeviceProperties data={data} />
+                  </AccordionDetails>
+                </Accordion>
               ))}
             </List>
           </Collapse>
@@ -306,7 +321,6 @@ const Settings = () => {
             onClick={() => {
               handleDialogChangeUserName();
               handleUpdate();
-              setNewUserName("");
             }}
           >
             Change

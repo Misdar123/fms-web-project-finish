@@ -169,6 +169,18 @@ const CardDrop = ({
       >
         <DeviceComponent
           deviceStyle={{ border: isActive ? "2px solid dodgerblue" : "none" }}
+          topLeftStyles={{
+            backgroundColor: item.properties[0] ? "#ab30e4" : "#000",
+          }}
+          topRightStyles={{
+            backgroundColor: item.properties[1] ? "#ff9925" : "#000",
+          }}
+          bottomLeftStyles={{
+            backgroundColor: item.properties[2] ? "#353535" : "#000",
+          }}
+          botomRightStyles={{
+            backgroundColor: item.properties[3] ? "#34dd9f" : "#000",
+          }}
         />
         <div
           style={{

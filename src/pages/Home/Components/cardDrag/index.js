@@ -36,15 +36,29 @@ const CardDrag = ({
     >
       {isActive && (
         <IconButton
-          sx={{ position: "absolute", top: "-20px", zIndex: 2}}
+          sx={{ position: "absolute", top: "-20px", zIndex: 2 }}
           onClick={onClick}
         >
           <RemoveCircleIcon fontSize="20px" sx={{ color: "red" }} />
         </IconButton>
       )}
-      <DeviceComponent />
 
-      <small style={{textAlign: "center"}}>{data?.name}</small>
+      <DeviceComponent
+        topLeftStyles={{
+          backgroundColor: data.properties[0] ? "#ab30e4" : "black",
+        }}
+        topRightStyles={{
+          backgroundColor: data.properties[1] ? "#ff9925" : "black",
+        }}
+        bottomLeftStyles ={{
+          backgroundColor: data.properties[2] ? "#353535" : "black",
+        }}
+        botomRightStyles = {{
+          backgroundColor: data.properties[3] ? "#34dd9f" : "black",
+        }}
+      />
+
+      <small style={{ textAlign: "center" }}>{data?.name}</small>
     </div>
   );
 };

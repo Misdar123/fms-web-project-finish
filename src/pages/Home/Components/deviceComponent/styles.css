@@ -40,11 +40,12 @@
     bottom: -12px;
     left: -3px;
     transform: rotate(135deg);
-    background-color: #353535;
+    background-color: #f5319d;
   }
   .bottom-right {
     position: absolute;
     bottom: -12px;
     right: -3px;
     transform: rotate(45deg);
+    background-color: #34dd9f;
   }

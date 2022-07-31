@@ -19,7 +19,7 @@ const IconLogo = () => {
         fontFamily="monospace"
         sx={{ flexGrow: 1 }}
       >
-        {isScreenMedium ? "Field Instruments and Management System" : "FMS"}
+        {isScreenMedium ? "Field Instruments and Management System" : "FIMS"}
       </Typography>
     </>
   );

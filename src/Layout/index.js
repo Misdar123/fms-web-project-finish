@@ -17,7 +17,6 @@ const DrawerHeader = styled("div")(({ theme }) => ({
 
 const Layout = ({ children }) => {
   const [open, setOpen] = useState(false);
-  const {changeThem} = useContextApi()
 
   return (
     <Box sx={{ display: "flex" }} >

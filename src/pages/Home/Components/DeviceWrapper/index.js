@@ -60,17 +60,21 @@ const DeviceWrapper = ({ children }) => {
   useEffect(() => {
     const layouts = [...layoutList];
 
+    // console.log(layouts.length)
+    // if (layouts.length === 0) {
+    //   alert("please create layout");
+    //   return;
+    // }
+
     if (dropItems.length === 0) return;
 
     const indexOfAllLayout = layouts.map((layout) => layout.id);
     const indexLayout = indexOfAllLayout.indexOf(newLayoutData.id);
 
     if (indexLayout === -1) {
-
       const data = { ...newLayoutData, devices: dropItems };
       const path = `users/${currentUserId}/layouts/`;
       updateDataBase(path, [...layouts, data]);
-
     } else {
       let layoutTarget = layouts.find(
         (layout) => layout.id === newLayoutData.id
@@ -84,9 +88,9 @@ const DeviceWrapper = ({ children }) => {
     }
   }, [dropItems]);
 
+  // find refrence drop item device in all device collections
   useEffect(() => {
     if (Array.isArray(newLayoutData?.devices)) {
-      // find refrence drop item device in all device collections
       const deviceRefrence = [];
 
       newLayoutData.devices.forEach((device) => {
@@ -97,7 +101,6 @@ const DeviceWrapper = ({ children }) => {
       });
 
       setDropItems(deviceRefrence);
-      
     } else {
       setDropItems([]);
     }

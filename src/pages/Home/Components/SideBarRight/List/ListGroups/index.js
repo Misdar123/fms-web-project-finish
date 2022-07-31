@@ -45,7 +45,7 @@ const ListGroups = ({open, onOpen}) => {
               />
             ))
           ) : (
-            <ListNoResult title={"Empty"} />
+            <ListNoResult title={"empty"} />
           )}
         </List>
       </Collapse>

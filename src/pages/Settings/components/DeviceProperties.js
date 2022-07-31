@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
-import { colors, IconButton, Stack, Typography } from "@mui/material";
+import { colors, IconButton, Stack, Typography, Box } from "@mui/material";
 import { useSelector } from "react-redux";
 
 import { updateDataBase } from "../../../lib/function/dataBaseCRUD";
@@ -33,20 +33,20 @@ function DeviceProperties({ data }) {
   const [deviceProperties, setDeviceProperties] = useState([]);
 
   const handleSubmit = () => {
-    const newDevice = allDevice.slice()
-    
-    const target = newDevice.find((device) => device.id === data.id)
-    const deviceTarget = {...target}
-    deviceTarget.name = deviceName
-    deviceTarget.sendDataInterval = sendDataInterval
-    deviceTarget.properties = deviceProperties
-  
-    const indexOfAllDevices = newDevice.map((device) => device.id)
-    const indexOfDeviceTarget = indexOfAllDevices.indexOf(data.id)
-    newDevice[indexOfDeviceTarget] = deviceTarget
+    const newDevice = allDevice.slice();
+
+    const target = newDevice.find((device) => device.id === data.id);
+    const deviceTarget = { ...target };
+    deviceTarget.name = deviceName;
+    deviceTarget.sendDataInterval = sendDataInterval;
+    deviceTarget.properties = deviceProperties;
+
+    const indexOfAllDevices = newDevice.map((device) => device.id);
+    const indexOfDeviceTarget = indexOfAllDevices.indexOf(data.id);
+    newDevice[indexOfDeviceTarget] = deviceTarget;
 
     const path = `users/${currentUserId}/devices`;
-    updateDataBase(path, newDevice)
+    updateDataBase(path, newDevice);
   };
 
   const handleDeleteProperties = (ID) => {
@@ -65,16 +65,17 @@ function DeviceProperties({ data }) {
   }, []);
 
   return (
-    <div
-      style={{
+    <Box
+      component="div"
+      sx={{
         marginBottom: "20px",
-        marginLeft: "50px",
-        marginRight: "25px",
+        marginLeft: { xs: "2px", sm: "50px" },
+        marginRight: { xs: "2px", sm: "25px" },
         border: "1px solid #e3e3e3",
         minHeight: "50px",
         borderRadius: "5px",
         marginTop: "5px",
-        padding: "10px",
+        padding: "5px",
       }}
     >
       <TextField
@@ -111,7 +112,7 @@ function DeviceProperties({ data }) {
         }}
       />
 
-      <Stack direction="row" mt={5} spacing={2}>
+      <Stack direction={{ xs: "column", sm: "row" }} mt={5} spacing={1}>
         <Typography sx={{ fontWeight: "bold", width: "300px" }}>
           send data interval :
         </Typography>
@@ -183,7 +184,7 @@ function DeviceProperties({ data }) {
       >
         <Button onClick={handleSubmit}>Update</Button>
       </Stack>
-    </div>
+    </Box>
   );
 }
 
@@ -192,7 +193,7 @@ const DevicePropertiesComponent = ({
   deviceProperties,
   setDeviceProperties,
   data,
-  index
+  index,
 }) => {
   const [expandModularIO, setExpandModularIO] = useState(null);
   const [expandIOType, setExpandIOType] = useState(null);
@@ -246,11 +247,15 @@ const DevicePropertiesComponent = ({
       p={1}
       style={{
         border: "1px solid #e3e3e3",
-        borderRadius: "10px",
+        borderRadius: "5px",
       }}
     >
-      <Stack spacing={1} direction="row" alignItems="center">
-        <Typography>Modular I/O </Typography>
+      <Stack
+        spacing={1}
+        direction={"row"}
+        alignItems="center"
+        justifyContent="space-between"
+      >
         <FormControl fullWidth>
           <InputLabel id="demo-simple-select-label">modular type</InputLabel>
           <Select
@@ -259,6 +264,7 @@ const DevicePropertiesComponent = ({
             value={modularIO}
             label="modular type"
             onChange={handleChangeModularIO}
+            sx={{ height: { xs: "30px", md: "50px" } }}
           >
             <MenuItem value={"Input"}>Input</MenuItem>
             <MenuItem value={"Output"}>Output</MenuItem>
@@ -289,8 +295,12 @@ const DevicePropertiesComponent = ({
       </Stack>
 
       {expandModularIO && (
-        <Stack spacing={1} direction="row" mt={2} alignItems="center">
-          <Typography sx={{ width: "80px" }}>I/O Type :</Typography>
+        <Stack
+          spacing={1}
+          direction={{ xs: "column", sm: "row" }}
+          mt={2}
+          alignItems="center"
+        >
           <FormControl fullWidth>
             <InputLabel id="demo-simple-select-label">IO Type</InputLabel>
             <Select
@@ -299,6 +309,7 @@ const DevicePropertiesComponent = ({
               value={IOType}
               label="IO Type"
               onChange={handleChangeIOType}
+              sx={{ height: { xs: "30px", md: "50px" } }}
             >
               <MenuItem value={"Digital"}>Digital</MenuItem>
               <MenuItem value={"Analog"}>Analog</MenuItem>
@@ -308,9 +319,13 @@ const DevicePropertiesComponent = ({
       )}
 
       {expandIOType && (
-        <Stack spacing={1} direction="row" mt={2} alignItems="center">
-          <Typography sx={{ width: "80px" }}>Sensor Type</Typography>
-          <FormControl sx={{ minWidth: "280px" }}>
+        <Stack
+          spacing={1}
+          direction={{ xs: "column", sm: "row" }}
+          mt={2}
+          alignItems="center"
+        >
+          <FormControl fullWidth>
             <InputLabel id="demo-simple-select-label">sensor type</InputLabel>
             <Select
               labelId="demo-simple-select-label"
@@ -318,6 +333,7 @@ const DevicePropertiesComponent = ({
               value={sensorType}
               label="Sensor Type"
               onChange={handleChangeSensorType}
+              sx={{ height: { xs: "30px", md: "50px" } }}
             >
               <MenuItem value={"Temperature"}>Temperature</MenuItem>
               <MenuItem value={"Humidity"}>Humidity</MenuItem>

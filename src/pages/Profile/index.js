@@ -16,7 +16,7 @@ const MyProfile = () => {
     <div
       style={{
         paddingTop: "50px",
-        minHeight: window.innerHeight,
+        minHeight: "100vh",
         backgroundColor: changeThem ? "#0a1929" : colors.grey[100],
         display: "flex",
         justifyContent: "center",
@@ -26,7 +26,7 @@ const MyProfile = () => {
         sx={{
           display: "flex",
           flexDirection: "column",
-          minWidth: "500px",
+          width: {xs: "285px", sm: "400px", md:"500px"},
           height: "300px",
         }}
       >
