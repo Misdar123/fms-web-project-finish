@@ -90,7 +90,7 @@ const MaterialUISwitch = styled(Switch)(({ theme }) => ({
 
 const CardContainer = styled("div")(({ theme }) => ({
   [theme.breakpoints.down("sm")]: {
-    width: "285px",
+    width: "290px",
   },
   [theme.breakpoints.up("sm")]: {
     width: "450px",

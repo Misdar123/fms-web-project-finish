@@ -24,15 +24,6 @@ export default function FormNewGroup({ openDialog, setOpenDialog }) {
   const [groupName, setGroupName] = useState("");
   const [checked, setChecked] = useState([]);
 
-  // const updateListAllDevice = () => {
-  //   let newDevice = [...allDevice]
-  //   checked.forEach((value) => {
-  //     newDevice = newDevice.filter((device) => device.id !== value.id)
-  //   });
-  //   const path = `users/${currentUserId}/devices`
-  //   updateDataBase(path, newDevice)
-  // };
-
   const creatGroup = () => {
     const oldGroup = groupDevice;
     const path = `users/${currentUserId}/groupDevices`;
@@ -90,7 +81,10 @@ export default function FormNewGroup({ openDialog, setOpenDialog }) {
 
           <List
             dense
-            sx={{ width: "100%", maxWidth: 300, bgcolor: "background.paper" }}
+            sx={{
+              width: { xs: "250px", sm: "400px" },
+              bgcolor: "background.paper",
+            }}
           >
             {allDevice.length !== 0 &&
               allDevice.map((value, index) => {
@@ -109,7 +103,29 @@ export default function FormNewGroup({ openDialog, setOpenDialog }) {
                     disablePadding
                   >
                     <ListItemButton>
-                      <DeviceComponent deviceStyle={{marginRight: "5px"}}/>
+                      <DeviceComponent
+                        deviceStyle={{ marginRight: "5px" }}
+                        topLeftStyles={{
+                          backgroundColor: value.properties[0]
+                            ? "#ab30e4"
+                            : "#000",
+                        }}
+                        topRightStyles={{
+                          backgroundColor: value.properties[1]
+                            ? "#ff9925"
+                            : "#000",
+                        }}
+                        bottomLeftStyles={{
+                          backgroundColor: value.properties[2]
+                            ? "#353535"
+                            : "#000",
+                        }}
+                        botomRightStyles={{
+                          backgroundColor: value.properties[3]
+                            ? "#34dd9f"
+                            : "#000",
+                        }}
+                      />
                       <ListItemText id={labelId} primary={value.name} />
                     </ListItemButton>
                   </ListItem>

@@ -26,8 +26,8 @@ const MyProfile = () => {
         sx={{
           display: "flex",
           flexDirection: "column",
-          width: {xs: "285px", sm: "400px", md:"500px"},
-          height: "300px",
+          width: {xs: "290px", sm: "400px", md:"500px"},
+          height: {xs: "250px", sm: "300px"},
         }}
       >
         <h1 style={{ textAlign: "center" }}>My Profile</h1>

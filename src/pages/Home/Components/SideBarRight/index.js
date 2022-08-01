@@ -67,11 +67,15 @@ const Drawer = styled(MuiDrawer, {
   }),
 }));
 
-const SideBarRight = ({ printComponentRef }) => {
+const SideBarRight = ({
+  printComponentRef,
+  openDrawer,
+  setOpenDrawer,
+  isDrawLock,
+  setIsDrawLock,
+}) => {
   const isMediumScreen = useMediaQuery((theme) => theme.breakpoints.up("md"));
   const [tab, setTab] = useState(0);
-  const [openDrawer, setOpenDrawer] = useState(true);
-  const [isDrawLock, setIsDrawLock] = useState(false);
 
   const handleSelectTab = (event, newValue) => {
     setTab(newValue);
@@ -81,11 +85,11 @@ const SideBarRight = ({ printComponentRef }) => {
     setOpenDrawer(!openDrawer);
   };
 
-  window.onclick = () => {
-    if (isDrawLock) {
-      handleOpenDrawer();
-    }
-  };
+  // window.onclick = () => {
+  //   if (isDrawLock) {
+  //     handleOpenDrawer();
+  //   }
+  // };
 
   const handleLockDrawer = () => {
     setIsDrawLock(!isDrawLock);
@@ -109,16 +113,16 @@ const SideBarRight = ({ printComponentRef }) => {
         <Stack direction="row" alignItems="center" spacing={0.5}>
           {openDrawer && (
             <>
-              <IconButton onClick={handleOpenDrawer} disabled={isDrawLock}>
+              <IconButton onClick={handleOpenDrawer} disabled={!isDrawLock}>
                 <CloseSharpIcon />
               </IconButton>
               {isDrawLock ? (
                 <IconButton onClick={handleLockDrawer}>
-                  <LockOpenOutlinedIcon />
+                  <LockOutlinedIcon sx={{ color: "red" }} />
                 </IconButton>
               ) : (
                 <IconButton onClick={handleLockDrawer}>
-                  <LockOutlinedIcon sx={{ color: "red" }} />
+                  <LockOpenOutlinedIcon />
                 </IconButton>
               )}
             </>

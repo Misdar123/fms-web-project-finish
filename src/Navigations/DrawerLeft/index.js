@@ -14,7 +14,7 @@ import ListIconContainer from "./ListContainer";
 import { useNavigate, useLocation } from "react-router-dom";
 import BarChartRoundedIcon from "@mui/icons-material/BarChartRounded";
 
-const drawerWidth = 240;
+const drawerWidth = 200;
 
 const openedMixin = (theme) => ({
   width: drawerWidth,

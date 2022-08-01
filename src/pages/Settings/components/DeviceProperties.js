@@ -69,9 +69,6 @@ function DeviceProperties({ data }) {
       component="div"
       sx={{
         marginBottom: "20px",
-        marginLeft: { xs: "2px", sm: "50px" },
-        marginRight: { xs: "2px", sm: "25px" },
-        border: "1px solid #e3e3e3",
         minHeight: "50px",
         borderRadius: "5px",
         marginTop: "5px",
@@ -114,7 +111,7 @@ function DeviceProperties({ data }) {
 
       <Stack direction={{ xs: "column", sm: "row" }} mt={5} spacing={1}>
         <Typography sx={{ fontWeight: "bold", width: "300px" }}>
-          send data interval :
+          interval data
         </Typography>
         <Slider
           defaultValue={data.sendDataInterval}
@@ -242,14 +239,7 @@ const DevicePropertiesComponent = ({
   };
 
   return (
-    <Stack
-      mt={2}
-      p={1}
-      style={{
-        border: "1px solid #e3e3e3",
-        borderRadius: "5px",
-      }}
-    >
+    <Stack mt={2}>
       <Stack
         spacing={1}
         direction={"row"}

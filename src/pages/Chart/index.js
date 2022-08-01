@@ -161,7 +161,6 @@ export default function Chart() {
     }
 
     // transform matrix of array
-
     const transform = [];
     for (let i = 0; i < listData[0].length; i++) {
       const row = [];

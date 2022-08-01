@@ -68,6 +68,9 @@ const Home = () => {
   const { shapesSelected } = useSelector((state) => state.drawer);
   const { userId } = useSelector((state) => state.user);
 
+  const [openSidebarRight, setOpenSidebarRight] = useState(true);
+  const [lockSideBar, setLockSideBar] = useState(true);
+
   const isSmallBreakPoint = useMediaQuery((theme) =>
     theme.breakpoints.down("sm")
   );
@@ -75,9 +78,8 @@ const Home = () => {
   const printComponentRef = useRef(null);
   const dispatch = useDispatch();
 
-  const [openScreenCreatNewLayout, setOpenScreenCreatNewLayout] = useState(
-    false
-  );
+  const [openScreenCreatNewLayout, setOpenScreenCreatNewLayout] =
+    useState(false);
   const [selecIndexOfLayout, setSelecIndexOfLayout] = useState(0);
 
   const [undoShapes, setUndoShapes] = useState([]);
@@ -383,6 +385,11 @@ const Home = () => {
     clearShapes();
   };
 
+  const handleLockSidebar = () => {
+    if (lockSideBar) return;
+    setOpenSidebarRight(false);
+  };
+
   useEffect(() => {
     const layoutData = layoutList[selecIndexOfLayout];
     if (layoutData?.shapes !== undefined) {
@@ -426,7 +433,7 @@ const Home = () => {
             sx={{ height: "30px" }}
             displayEmpty
             startAdornment={
-              <InputAdornment>
+              <InputAdornment position="start">
                 <CropSquareOutlinedIcon />
               </InputAdornment>
             }
@@ -456,7 +463,7 @@ const Home = () => {
             sx={{ height: "30px", ml: 1 }}
             displayEmpty
             startAdornment={
-              <InputAdornment>
+              <InputAdornment position="start">
                 <BorderColorRoundedIcon />
               </InputAdornment>
             }
@@ -528,7 +535,7 @@ const Home = () => {
       />
 
       {/* content */}
-      <div ref={printComponentRef}>
+      <div ref={printComponentRef} onClick={handleLockSidebar}>
         {layoutList.length === 0 && <EmptyLayoutAnimation />}
         {layoutList.length !== 0 && (
           <DeviceWrapper>
@@ -636,7 +643,13 @@ const Home = () => {
 
       {/* Side bar rught */}
 
-      <SideBarRight printComponentRef={printComponentRef} />
+      <SideBarRight
+        printComponentRef={printComponentRef}
+        openDrawer={openSidebarRight}
+        setOpenDrawer={setOpenSidebarRight}
+        isDrawLock={lockSideBar}
+        setIsDrawLock={setLockSideBar}
+      />
     </div>
   );
 };

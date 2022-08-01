@@ -50,9 +50,7 @@ function App() {
 
   const [deviceInGroups, setDeviceInGroups] = useState([]);
 
-  const [deviceAlreadyUsedInLayout, setDeviceAlreadyUsedInLayout] = useState(
-    []
-  );
+  const [allDeviceExisInLayout, setAllDeviceExisInLayout] = useState([]);
 
   const them = JSON.parse(localStorage.getItem("THEM"));
   const [changeThem, setChangeThem] = useState(them);
@@ -66,6 +64,15 @@ function App() {
     dispatch(insertLayout(data?.layouts || []));
     setCurrentUserId(stringRegex(data?.email));
     setIsDataAvaliable(true);
+    const findDeviceExisInLayout = [];
+    if (data.layouts !== undefined) {
+      data.layouts.forEach((data) => {
+        if (data.devices !== undefined) {
+          findDeviceExisInLayout.push(...data.devices);
+        }
+      });
+    }
+    setAllDeviceExisInLayout(findDeviceExisInLayout);
   };
 
   useEffect(() => {
@@ -101,28 +108,42 @@ function App() {
     });
   };
 
+  // window.addEventListener("beforeunload", function (e) {
+  //   handleLogout();
+  // });
 
-  document.addEventListener("mousemove", () =>{ 
-    localStorage.setItem('lastActvity', new Date())
+  document.addEventListener("pointerdown", (event) => {
+    if (event.pointerType === "mouse") {
+      localStorage.setItem("lastActvity", new Date());
+    }
+    if (event.pointerType === "touch") {
+      localStorage.setItem("lastActvity", new Date());
+    }
+    if (event.pointerType === "pen") {
+      localStorage.setItem("lastActvity", new Date());
+    }
   });
-  document.addEventListener("click", () =>{ 
-    localStorage.setItem('lastActvity', new Date())
+
+  document.addEventListener("mousemove", () => {
+    localStorage.setItem("lastActvity", new Date());
   });
-  
+
+  document.addEventListener("click", () => {
+    localStorage.setItem("lastActvity", new Date());
+  });
 
   let timeInterval = setInterval(() => {
-  let lastAcivity = localStorage.getItem('lastActvity')
-  let diffMs = Math.abs(new Date(lastAcivity) - new Date());
-  let seconds = Math.floor((diffMs/1000));
-  let minute = Math.floor((seconds/60));
-  // console.log(seconds +' sec and '+minute+' min since last activity')
-  if(minute == 30){
-    handleLogout()
-    console.log('No activity, logout')
-    clearInterval(timeInterval)
-  }
-
-},1000)
+    let lastAcivity = localStorage.getItem("lastActvity");
+    let diffMs = Math.abs(new Date(lastAcivity) - new Date());
+    let seconds = Math.floor(diffMs / 1000);
+    let minute = Math.floor(seconds / 60);
+    // console.log(seconds +' sec and '+minute+' min since last activity')
+    if (minute == 30) {
+      handleLogout();
+      console.log("No activity, logout");
+      clearInterval(timeInterval);
+    }
+  }, 1000);
 
   if (!isDataAvaliable) {
     return <LoadingPage />;
@@ -153,8 +174,8 @@ function App() {
           setChangeThem,
           deviceInGroups,
           setDeviceInGroups,
-          deviceAlreadyUsedInLayout,
-          setDeviceAlreadyUsedInLayout,
+          allDeviceExisInLayout,
+          setAllDeviceExisInLayout,
         }}
       >
         <DndProvider backend={HTML5Backend}>

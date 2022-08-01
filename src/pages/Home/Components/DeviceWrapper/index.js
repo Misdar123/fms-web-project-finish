@@ -11,7 +11,8 @@ import {
 
 const DeviceWrapper = ({ children }) => {
   const dispatch = useDispatch();
-  const { setIsDisplayAlert, currentUserId } = useContextApi();
+  const { setIsDisplayAlert, currentUserId, allDeviceExisInLayout } =
+    useContextApi();
 
   const [dropItems, setDropItems] = useState([]);
   const [selectIndexDropItem, setSelectIndexDropItem] = useState(null);
@@ -60,11 +61,12 @@ const DeviceWrapper = ({ children }) => {
   useEffect(() => {
     const layouts = [...layoutList];
 
-    // console.log(layouts.length)
-    // if (layouts.length === 0) {
-    //   alert("please create layout");
-    //   return;
-    // }
+    const dropItemsId = dropItems.map((item) => item.macAddress);
+    const allMacAddress = allDeviceExisInLayout.map((item) => item.macAddress);
+    const isDeviceAlreadyExis = allMacAddress.includes(...dropItemsId.slice(-1));
+    if (isDeviceAlreadyExis) {
+      return;
+    }
 
     if (dropItems.length === 0) return;
 
@@ -89,7 +91,7 @@ const DeviceWrapper = ({ children }) => {
   }, [dropItems]);
 
   // find refrence drop item device in all device collections
-  useEffect(() => {
+  const refrenceDevice = () => {
     if (Array.isArray(newLayoutData?.devices)) {
       const deviceRefrence = [];
 
@@ -104,6 +106,10 @@ const DeviceWrapper = ({ children }) => {
     } else {
       setDropItems([]);
     }
+  };
+
+  useEffect(() => {
+    refrenceDevice();
   }, [layoutIndexSelected, layoutList, publicDevice]);
 
   const handleAddDeleteItemInRedux = (index) => {

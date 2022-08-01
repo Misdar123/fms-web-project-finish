@@ -164,7 +164,9 @@ const CardDrop = ({
         onMouseUp={handleMouseUp}
         onMouseLeave={() => setShowSensorValue(false)}
         onMouseMove={handleMouseMove}
+        onTouchMove={handleMouseMove}
         onClick={onClick}
+        onTouchStart={onClick}
         style={{ position: "absolute" }}
       >
         <DeviceComponent
