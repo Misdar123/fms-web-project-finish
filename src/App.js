@@ -50,7 +50,7 @@ function App() {
 
   const [deviceInGroups, setDeviceInGroups] = useState([]);
 
-  const [allDeviceExisInLayout, setAllDeviceExisInLayout] = useState([]);
+  const [selecIndexOfLayout, setSelecIndexOfLayout] = useState(0);
 
   const them = JSON.parse(localStorage.getItem("THEM"));
   const [changeThem, setChangeThem] = useState(them);
@@ -63,17 +63,26 @@ function App() {
     dispatch(insertUsers(data));
     dispatch(insertLayout(data?.layouts || []));
     setCurrentUserId(stringRegex(data?.email));
-    setIsDataAvaliable(true);
-    const findDeviceExisInLayout = [];
+
+    // get all macAdress device for check duplicated device
     if (data.layouts !== undefined) {
+      const findDeviceExisInLayout = [];
       data.layouts.forEach((data) => {
         if (data.devices !== undefined) {
           findDeviceExisInLayout.push(...data.devices);
         }
       });
+      const allMacAddress = findDeviceExisInLayout.map(
+        (item) => item.macAddress
+      );
+      localStorage.setItem("allMacAddress", JSON.stringify(allMacAddress));
+    } else {
+      localStorage.setItem("allMacAddress", JSON.stringify([]));
     }
-    setAllDeviceExisInLayout(findDeviceExisInLayout);
+    setIsDataAvaliable(true);
   };
+
+  // localStorage.clear()
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
@@ -174,8 +183,8 @@ function App() {
           setChangeThem,
           deviceInGroups,
           setDeviceInGroups,
-          allDeviceExisInLayout,
-          setAllDeviceExisInLayout,
+          selecIndexOfLayout,
+          setSelecIndexOfLayout,
         }}
       >
         <DndProvider backend={HTML5Backend}>

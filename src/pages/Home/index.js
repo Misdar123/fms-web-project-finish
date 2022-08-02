@@ -62,6 +62,7 @@ const Home = () => {
     textDraw,
     setTextDraw,
     changeThem,
+    selecIndexOfLayout, setSelecIndexOfLayout
   } = useContextApi();
   const { layoutList } = useSelector((state) => state.layouts);
   const { deviceDelete } = useSelector((state) => state.devices);
@@ -71,17 +72,12 @@ const Home = () => {
   const [openSidebarRight, setOpenSidebarRight] = useState(true);
   const [lockSideBar, setLockSideBar] = useState(true);
 
-  const isSmallBreakPoint = useMediaQuery((theme) =>
-    theme.breakpoints.down("sm")
-  );
-
   const printComponentRef = useRef(null);
   const dispatch = useDispatch();
 
   const [openScreenCreatNewLayout, setOpenScreenCreatNewLayout] =
     useState(false);
-  const [selecIndexOfLayout, setSelecIndexOfLayout] = useState(0);
-
+  
   const [undoShapes, setUndoShapes] = useState([]);
   const [redoShapes, setRedoShapes] = useState([]);
 
@@ -282,7 +278,9 @@ const Home = () => {
 
   const handleDeleteDevice = () => {
     if (deviceDelete === null) return;
-
+    
+    localStorage.removeItem(deviceDelete.device.macAddress)
+    
     const newLayouts = [...layoutList];
     const layoutTarget = {
       ...layoutList.find((layout) => layout.id === deviceDelete.layoutId),
@@ -382,6 +380,7 @@ const Home = () => {
   const handleSetIndexLayout = (event) => {
     setSelecIndexOfLayout(event.target.value);
     dispatch(setIndexLayout(event.target.value));
+    dispatch(addDeviceDelete(null));
     clearShapes();
   };
 

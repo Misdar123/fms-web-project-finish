@@ -8,35 +8,20 @@ import Collapse from "@mui/material/Collapse";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
-import { updateDataBase } from "../../../../../../lib/function/dataBaseCRUD";
 import CardDrag from "../../../cardDrag";
 import ListNoResult from "../ListNoResult";
 
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
-import { Button } from "@mui/material";
 import { useContextApi } from "../../../../../../lib/hooks/useContexApi";
+import { setIndexLayout } from "../../../../../../redux/features/layoutSlice";
 
 const ListAllDevices = ({ onOpen, open }) => {
-  const { currentUserId, deviceInGroups } = useContextApi();
+  const { deviceInGroups, setSelecIndexOfLayout } = useContextApi();
   const { allDevice, groupDevice } = useSelector((state) => state.devices);
-  const [openPopUp, setOpenPopUp] = useState(false);
   const [dragItems, setDragItems] = useState([]);
-
-  const deleteDevice = (id) => {
-    const result = allDevice.filter((device) => device.id !== id);
-    const path = `users/${currentUserId}/devices`;
-    updateDataBase(path, result);
-  };
-
-  const handlePopUp = () => {
-    setOpenPopUp(!openPopUp);
-  };
+  const { layoutList } = useSelector((state) => state.layouts);
+  const dispatch = useDispatch();
 
   // filter data by device group
   useEffect(() => {
@@ -58,6 +43,26 @@ const ListAllDevices = ({ onOpen, open }) => {
     }
   }, [allDevice, deviceInGroups]);
 
+  const handleSelectFindLayoutOnClick = (value) => {
+    const newLayouts = [...layoutList];
+    let indexLayout = null;
+
+    newLayouts.forEach((data, index) => {
+      if (Array.isArray(data.devices)) {
+        const result = data.devices
+          .map((device) => device.macAddress)
+          .includes(value.macAddress);
+
+        if (result) {
+          indexLayout = index;
+          return;
+        }
+      }
+    });
+    setSelecIndexOfLayout(indexLayout);
+    dispatch(setIndexLayout(indexLayout));
+  };
+
   return (
     <>
       <ListItemButton onClick={onOpen}>
@@ -73,33 +78,11 @@ const ListAllDevices = ({ onOpen, open }) => {
             {dragItems.length !== 0 ? (
               dragItems.map((data, index) => (
                 <div key={index}>
-                  <CardDrag data={data} key={index} onClick={handlePopUp} />
-
-                  <Dialog
-                    open={openPopUp}
-                    onClose={handlePopUp}
-                    aria-labelledby="alert-dialog-title"
-                    aria-describedby="alert-dialog-description"
-                  >
-                    <DialogTitle id="alert-dialog-title"></DialogTitle>
-                    <DialogContent>
-                      <DialogContentText id="alert-dialog-description">
-                        Delete {data.name}
-                      </DialogContentText>
-                    </DialogContent>
-                    <DialogActions>
-                      <Button onClick={handlePopUp}>cancel</Button>
-                      <Button
-                        onClick={() => {
-                          deleteDevice(data.id);
-                          handlePopUp();
-                        }}
-                        autoFocus
-                      >
-                        ok
-                      </Button>
-                    </DialogActions>
-                  </Dialog>
+                  <CardDrag
+                    data={data}
+                    key={index}
+                    onDoubleClick={() => handleSelectFindLayoutOnClick(data)}
+                  />
                 </div>
               ))
             ) : (

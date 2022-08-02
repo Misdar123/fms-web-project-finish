@@ -14,20 +14,26 @@ import {
   updateDataBase,
   writeDataBase,
 } from "../../../../../../lib/function/dataBaseCRUD";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
+import { setIndexLayout } from "../../../../../../redux/features/layoutSlice";
 
 const ListGroupNested = ({ data, isListOpen, onClick, onDoubleClick }) => {
-  const { currentUserId } = useContextApi();
+  const { currentUserId, setSelecIndexOfLayout } = useContextApi();
   const { groupDevice } = useSelector((state) => state.devices);
   const { userId } = useSelector((state) => state.user);
   const [dragItems, setDragItems] = useState(null);
   const [openPopUp, setOpenPopUp] = useState(false);
+
+  const { layoutList } = useSelector((state) => state.layouts);
+
+
+  const dispatch = useDispatch()
 
   useEffect(() => {
     setDragItems(data.devices || [])
@@ -63,6 +69,27 @@ const ListGroupNested = ({ data, isListOpen, onClick, onDoubleClick }) => {
     setOpenPopUp(!openPopUp);
   };
 
+  const handleSelectFindLayoutOnClick = (value) => {
+    const newLayouts = [...layoutList];
+    let indexLayout = null;
+
+    newLayouts.forEach((data, index) => {
+      if (Array.isArray(data.devices)) {
+        const result = data.devices
+          .map((device) => device.macAddress)
+          .includes(value.macAddress);
+
+        if (result) {
+          indexLayout = index;
+          return;
+        }
+      }
+    });
+    setSelecIndexOfLayout(indexLayout);
+    dispatch(setIndexLayout(indexLayout));
+  };
+
+
   return (
     <>
       <Stack
@@ -83,12 +110,13 @@ const ListGroupNested = ({ data, isListOpen, onClick, onDoubleClick }) => {
       <Collapse in={isListOpen} timeout="auto" unmountOnExit>
         <Stack direction="row" mb={5} flexWrap="wrap" ml={5}>
           {dragItems &&
-            dragItems.map((list, index) => (
+            dragItems.map((data, index) => (
               <CardDrag
-                data={list}
+                data={data}
                 key={index}
                 size={40}
-                onClick={() => handleDeleteDevice(list.id)}
+                onClick={() => handleDeleteDevice(data.id)}
+                onDoubleClick={() => handleSelectFindLayoutOnClick(data)}
               />
             ))}
         </Stack>

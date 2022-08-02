@@ -117,7 +117,7 @@ export default function FormNewGroup({ openDialog, setOpenDialog }) {
                         }}
                         bottomLeftStyles={{
                           backgroundColor: value.properties[2]
-                            ? "#353535"
+                            ? "#FF2782"
                             : "#000",
                         }}
                         botomRightStyles={{

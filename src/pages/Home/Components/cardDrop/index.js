@@ -31,7 +31,6 @@ const CardDrop = ({
 
   const [offset, setOffset] = useState([100, 100]);
   const [isDown, setIsDown] = useState(false);
-  const [deviceData, setDeviceData] = useState(null);
   const [isSwitchOn, setIsSwitchOn] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const [rangeTimer, setRangeTimer] = useState(10);
@@ -107,12 +106,9 @@ const CardDrop = ({
 
   const downloadLogFileTxt = () => {
     const element = document.createElement("a");
-    const file = new Blob(
-      [Object.values(deviceData.sensor[0].log).join("\n")],
-      {
-        type: "text/plain",
-      }
-    );
+    const file = new Blob([Object.values(item.sensor[0].log).join("\n")], {
+      type: "text/plain",
+    });
     element.href = URL.createObjectURL(file);
     element.download = "log.txt";
     document.body.appendChild(element);
@@ -128,7 +124,6 @@ const CardDrop = ({
 
   useEffect(() => {
     const result = JSON.parse(localStorage.getItem(item.macAddress));
-
     if (result !== null) {
       divOverlay.current.style.left = result.position.left;
       divOverlay.current.style.top = result.position.top;
@@ -136,14 +131,7 @@ const CardDrop = ({
       divOverlay.current.style.left = "100px";
       divOverlay.current.style.top = "100px";
     }
-  }, []);
-
-  useEffect(() => {
-    const path = `devices/${item.macAddress}`;
-    readDataBase(path, (data) => {
-      setDeviceData(data);
-    });
-  }, []);
+  }, [item]);
 
   useEffect(() => {
     setIsSwitchOn(control?.TX);
@@ -166,7 +154,6 @@ const CardDrop = ({
         onMouseMove={handleMouseMove}
         onTouchMove={handleMouseMove}
         onClick={onClick}
-        onTouchStart={onClick}
         style={{ position: "absolute" }}
       >
         <DeviceComponent
@@ -178,7 +165,7 @@ const CardDrop = ({
             backgroundColor: item.properties[1] ? "#ff9925" : "#000",
           }}
           bottomLeftStyles={{
-            backgroundColor: item.properties[2] ? "#353535" : "#000",
+            backgroundColor: item.properties[2] ? "#FF2782" : "#000",
           }}
           botomRightStyles={{
             backgroundColor: item.properties[3] ? "#34dd9f" : "#000",
@@ -194,7 +181,7 @@ const CardDrop = ({
           }}
         >
           {showSensorValue &&
-            deviceData?.sensor.map((data, index) => (
+            item?.sensor.map((data, index) => (
               <small
                 key={index}
                 style={{

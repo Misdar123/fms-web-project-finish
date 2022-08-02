@@ -2,23 +2,23 @@ import React, { useEffect, useState } from "react";
 import { useDrop } from "react-dnd";
 import CardDrop from "../cardDrop";
 import { useContextApi } from "../../../../lib/hooks/useContexApi";
-import { updateDataBase } from "../../../../lib/function/dataBaseCRUD";
-import { useDispatch, useSelector } from "react-redux";
 import {
-  addDeviceDelete,
-  addDeviceInLayout,
-} from "../../../../redux/features/deviceSlice";
+  readDataBase,
+  updateDataBase,
+} from "../../../../lib/function/dataBaseCRUD";
+import { useDispatch, useSelector } from "react-redux";
+import { addDeviceDelete } from "../../../../redux/features/deviceSlice";
 
 const DeviceWrapper = ({ children }) => {
   const dispatch = useDispatch();
-  const { setIsDisplayAlert, currentUserId, allDeviceExisInLayout } =
-    useContextApi();
+  const { setIsDisplayAlert, currentUserId } = useContextApi();
 
   const [dropItems, setDropItems] = useState([]);
   const [selectIndexDropItem, setSelectIndexDropItem] = useState(null);
   const { layoutList, layoutIndexSelected } = useSelector(
     (state) => state.layouts
   );
+
   const newLayoutData = layoutList[layoutIndexSelected];
   const { publicDevice, allDevice } = useSelector((state) => state.devices);
   const dragItems = allDevice;
@@ -33,15 +33,13 @@ const DeviceWrapper = ({ children }) => {
 
   const addItemToDropList = (id) => {
     const result = dragItems.filter((item) => id === item.id);
-    setDropItems((item) => [...item, result[0]]);
-  };
+    const getAllMacAdress =
+      JSON.parse(localStorage.getItem("allMacAddress")) || [];
+    const isDeviceAlreadyExis = getAllMacAdress.includes(result[0].macAddress);
 
-  // // check duplicate dropItems
-  useEffect(() => {
-    const dropItemsId = dropItems.map((item) => item.macAddress);
-    const dropItemUniqueId = [...new Set(dropItemsId)];
-
-    if (dropItemUniqueId.length !== dropItems.length) {
+    if (!isDeviceAlreadyExis) {
+      setDropItems((item) => [...item, result[0]]);
+    } else {
       setIsDisplayAlert({
         isError: true,
         message: "device sudah digunakan",
@@ -51,25 +49,22 @@ const DeviceWrapper = ({ children }) => {
         () => setIsDisplayAlert({ isError: false, message: "", type: "error" }),
         2000
       );
-      dropItems.pop();
-    } else {
-      dispatch(addDeviceInLayout(dropItems[dropItems.length - 1]));
     }
-  }, [dropItems]);
+  };
 
   // save drop items in layouts to data base
   useEffect(() => {
-    const layouts = [...layoutList];
-
     const dropItemsId = dropItems.map((item) => item.macAddress);
-    const allMacAddress = allDeviceExisInLayout.map((item) => item.macAddress);
-    const isDeviceAlreadyExis = allMacAddress.includes(...dropItemsId.slice(-1));
-    if (isDeviceAlreadyExis) {
-      return;
-    }
+    const getAllMacAdress =
+      JSON.parse(localStorage.getItem("allMacAddress")) || [];
+    const isDeviceAlreadyExis = getAllMacAdress.includes(
+      ...dropItemsId.slice(-1)
+    );
+    if (isDeviceAlreadyExis) return;
 
     if (dropItems.length === 0) return;
 
+    const layouts = [...layoutList];
     const indexOfAllLayout = layouts.map((layout) => layout.id);
     const indexLayout = indexOfAllLayout.indexOf(newLayoutData.id);
 
@@ -90,11 +85,11 @@ const DeviceWrapper = ({ children }) => {
     }
   }, [dropItems]);
 
-  // find refrence drop item device in all device collections
-  const refrenceDevice = () => {
+  // find refrence drop item device in all device list
+  useEffect(() => {
+    setDropItems([]);
     if (Array.isArray(newLayoutData?.devices)) {
       const deviceRefrence = [];
-
       newLayoutData.devices.forEach((device) => {
         const findDeviceRefrence = allDevice.filter(
           (deviceItem) => deviceItem.macAddress === device.macAddress
@@ -102,14 +97,22 @@ const DeviceWrapper = ({ children }) => {
         deviceRefrence.push(...findDeviceRefrence);
       });
 
-      setDropItems(deviceRefrence);
+      const getDeviceFromDataBase = [];
+      deviceRefrence.forEach((item) => {
+        const path = `devices/${item.macAddress}`;
+        readDataBase(path, (data) => {
+          getDeviceFromDataBase.push({
+            ...data,
+            properties: item.properties,
+            macAddress: item.macAddress,
+          });
+        });
+      });
+      setDropItems(getDeviceFromDataBase);
     } else {
       setDropItems([]);
     }
-  };
-
-  useEffect(() => {
-    refrenceDevice();
+    setSelectIndexDropItem(null);
   }, [layoutIndexSelected, layoutList, publicDevice]);
 
   const handleAddDeleteItemInRedux = (index) => {
@@ -134,11 +137,9 @@ const DeviceWrapper = ({ children }) => {
             <CardDrop
               key={index}
               item={item}
-              layoutId={newLayoutData.id}
               onClick={() => handleAddDeleteItemInRedux(index)}
               isActive={selectIndexDropItem === index}
               onDoubleClick={handleOnDoubleClick}
-              isDraging={isOver}
             />
           );
         })}

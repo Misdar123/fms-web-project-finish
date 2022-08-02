@@ -62,7 +62,7 @@ const DesignBoard = ({ printComponentRef }) => {
   }, [shapesSelected]);
 
   useEffect(() => {
-    if(!printComponentRef) return
+    if (!printComponentRef) return;
     switch (zoomSquare) {
       case 0.1:
         printComponentRef.current.style.transform = "scale(0.1)";
@@ -70,16 +70,11 @@ const DesignBoard = ({ printComponentRef }) => {
       case 0.5:
         printComponentRef.current.style.transform = "scale(0.5)";
         break;
+      case 0.75:
+        printComponentRef.current.style.transform = "scale(0.75)";
+        break;
       case 1:
         printComponentRef.current.style.transform = "scale(1)";
-        break;
-      case 1.5:
-        printComponentRef.current.style.transform = "scale(1.5)";
-        break;
-      case 2:
-        printComponentRef.current.style.transform = "scale(2)";
-        break;
-      default:
         break;
     }
   }, [zoomSquare]);
@@ -97,9 +92,8 @@ const DesignBoard = ({ printComponentRef }) => {
         >
           <MenuItem value={0.1}>10%</MenuItem>
           <MenuItem value={0.5}>50%</MenuItem>
+          <MenuItem value={0.75}>75%</MenuItem>
           <MenuItem value={1}>100%</MenuItem>
-          <MenuItem value={1.5}>150%</MenuItem>
-          <MenuItem value={2}>200%</MenuItem>
         </Select>
       </FormControl>
       {shapesSelected && (
