@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Dialog from "@mui/material/Dialog";
@@ -24,6 +24,34 @@ export default function FormNewGroup({ openDialog, setOpenDialog }) {
   const [groupName, setGroupName] = useState("");
   const [checked, setChecked] = useState([]);
 
+  const [listDevices, setListDevices] = useState([]);
+
+  useEffect(() => {
+    let newDevice = [...allDevice];
+
+    const deviceInGroup = [];
+    groupDevice.forEach((device) => {
+      deviceInGroup.push(...device.devices);
+    });
+
+    const result = [];
+    deviceInGroup.forEach((data) => {
+      const filterDevice = newDevice.filter((device) => device.id !== data.id);
+      result.push(...filterDevice);
+    });
+
+    if (allDevice.length === deviceInGroup.length) {
+      setListDevices([]);
+      return;
+    }
+
+    if (result.length !== 0) {
+      setListDevices(result);
+    } else {
+      setListDevices(allDevice);
+    }
+  }, [groupDevice]);
+
   const creatGroup = () => {
     const oldGroup = groupDevice;
     const path = `users/${currentUserId}/groupDevices`;
@@ -39,7 +67,6 @@ export default function FormNewGroup({ openDialog, setOpenDialog }) {
       return;
     }
     creatGroup();
-    // updateListAllDevice()
     setOpenDialog(!openDialog);
     setGroupName("");
   };
@@ -73,10 +100,10 @@ export default function FormNewGroup({ openDialog, setOpenDialog }) {
             onChange={(e) => setGroupName(e.target.value)}
           />
 
-          {allDevice.length !== 0 ? (
-            <Typography sx={{ pt: 5 }}> pilih device </Typography>
+          {listDevices.length !== 0 ? (
+            <Typography sx={{ pt: 5 }}> choice device </Typography>
           ) : (
-            <Typography sx={{ pt: 5 }}> belum ada device </Typography>
+            <Typography sx={{ pt: 5 }}> device empty </Typography>
           )}
 
           <List
@@ -86,8 +113,8 @@ export default function FormNewGroup({ openDialog, setOpenDialog }) {
               bgcolor: "background.paper",
             }}
           >
-            {allDevice.length !== 0 &&
-              allDevice.map((value, index) => {
+            {Array.isArray(listDevices) &&
+              listDevices.map((value, index) => {
                 const labelId = `checkbox-list-secondary-label-${index}`;
                 return (
                   <ListItem

@@ -5,7 +5,8 @@ import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import IconLogo from "./IconLogo";
-import { Badge, Box, Button, Paper, Typography } from "@mui/material";
+import { Badge, Box, Button, Paper, Stack, Typography } from "@mui/material";
+import CommentsDisabledIcon from "@mui/icons-material/CommentsDisabled";
 import MailIcon from "@mui/icons-material/Mail";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import { useContextApi } from "../../lib/hooks/useContexApi";
@@ -59,7 +60,7 @@ const AppBarStyles = ({ isOpen, setIsOpen }) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
 
-  const handleClick = (event) => {
+  const handleOpenMenu = (event) => {
     setAnchorEl(event.currentTarget);
   };
   const handleClose = () => {
@@ -92,6 +93,7 @@ const AppBarStyles = ({ isOpen, setIsOpen }) => {
             size="large"
             aria-label="show 4 new mails"
             color="inherit"
+            onClick={handleOpenMenu}
           >
             <Badge badgeContent={0} color="error">
               <MailIcon />
@@ -99,9 +101,9 @@ const AppBarStyles = ({ isOpen, setIsOpen }) => {
           </IconButton>
           <IconButton
             size="large"
-            aria-label="show 17 new notifications"
+            aria-label="show notifications"
             color="inherit"
-            onClick={handleClick}
+            onClick={handleOpenMenu}
           >
             <Badge badgeContent={0} color="error">
               <NotificationsIcon />
@@ -125,7 +127,22 @@ const AppBarStyles = ({ isOpen, setIsOpen }) => {
             "aria-labelledby": "basic-button",
           }}
         >
-          <MenuItem onClick={handleClose}>Tidak ada notifikasi</MenuItem>
+          <MenuItem onClick={handleClose}>
+            <div
+              style={{
+                minHeight: "100px",
+                width: "200px",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Stack direction="row" alignItems="center" spacing={2}>
+                <CommentsDisabledIcon sx={{ color: "gray" }} />
+                <Typography sx={{ color: "gray" }}>Nothing</Typography>
+              </Stack>
+            </div>
+          </MenuItem>
         </Menu>
       </Paper>
       <Dialog

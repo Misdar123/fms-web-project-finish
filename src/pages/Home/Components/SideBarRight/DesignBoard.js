@@ -64,9 +64,6 @@ const DesignBoard = ({ printComponentRef }) => {
   useEffect(() => {
     if (!printComponentRef) return;
     switch (zoomSquare) {
-      case 0.1:
-        printComponentRef.current.style.transform = "scale(0.1)";
-        break;
       case 0.5:
         printComponentRef.current.style.transform = "scale(0.5)";
         break;
@@ -90,7 +87,6 @@ const DesignBoard = ({ printComponentRef }) => {
           label="100%"
           onChange={handleChange}
         >
-          <MenuItem value={0.1}>10%</MenuItem>
           <MenuItem value={0.5}>50%</MenuItem>
           <MenuItem value={0.75}>75%</MenuItem>
           <MenuItem value={1}>100%</MenuItem>

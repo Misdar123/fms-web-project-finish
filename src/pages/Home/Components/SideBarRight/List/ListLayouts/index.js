@@ -10,11 +10,8 @@ import ExpandMore from "@mui/icons-material/ExpandMore";
 import { useSelector, useDispatch } from "react-redux";
 import { Button, IconButton, ListItem, Stack } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-import Menu from "@mui/material/Menu";
-import DeleteIcon from "@mui/icons-material/Delete";
 import ListChild from "./ListChild";
 import ListNoResult from "../ListNoResult";
-import { addDeviceDelete } from "../../../../../../redux/features/deviceSlice";
 import { setIndexLayout } from "../../../../../../redux/features/layoutSlice";
 import { updateDataBase } from "../../../../../../lib/function/dataBaseCRUD";
 
@@ -23,18 +20,22 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
+import { useContextApi } from "../../../../../../lib/hooks/useContexApi";
 
 const ListLayouts = ({ open, onOpen }) => {
   const { layoutList } = useSelector((state) => state.layouts);
   const { userId } = useSelector((state) => state.user);
   const [selectIndexLayout, setSelectIndexLayout] = useState(0);
+  const {setSelecIndexOfLayout } = useContextApi();
+
   const dispatch = useDispatch();
 
   const [openPopUp, setOpenPopUp] = useState(false);
   
-  const handleOnClick = (index) => {
+  const handleListOnClick = (index) => {
     dispatch(setIndexLayout(index));
     setSelectIndexLayout(index);
+    setSelecIndexOfLayout(index)
   };
 
   const handlePopUp = () => {
@@ -69,14 +70,14 @@ const ListLayouts = ({ open, onOpen }) => {
                     sx={{ mr: 2 }}
                     onClick={(e) => {
                       handlePopUp();
-                      handleOnClick(index);
+                      handleListOnClick(index);
                     }}
                   >
                     <MoreVertIcon />
                   </IconButton>
                   <ListChild
                     listData={data}
-                    onClick={() => handleOnClick(index)}
+                    onClick={() => handleListOnClick(index)}
                   />
 
                   <Dialog

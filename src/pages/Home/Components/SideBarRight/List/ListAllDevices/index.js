@@ -43,6 +43,7 @@ const ListAllDevices = ({ onOpen, open }) => {
     }
   }, [allDevice, deviceInGroups]);
 
+  // select layout when device on double click
   const handleSelectFindLayoutOnClick = (value) => {
     const newLayouts = [...layoutList];
     let indexLayout = null;
@@ -59,6 +60,7 @@ const ListAllDevices = ({ onOpen, open }) => {
         }
       }
     });
+    if (indexLayout === null) return;
     setSelecIndexOfLayout(indexLayout);
     dispatch(setIndexLayout(indexLayout));
   };

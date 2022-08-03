@@ -85,12 +85,6 @@ const SideBarRight = ({
     setOpenDrawer(!openDrawer);
   };
 
-  // window.onclick = () => {
-  //   if (isDrawLock) {
-  //     handleOpenDrawer();
-  //   }
-  // };
-
   const handleLockDrawer = () => {
     setIsDrawLock(!isDrawLock);
   };

@@ -32,11 +32,10 @@ const ListGroupNested = ({ data, isListOpen, onClick, onDoubleClick }) => {
 
   const { layoutList } = useSelector((state) => state.layouts);
 
-
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    setDragItems(data.devices || [])
+    setDragItems(data.devices || []);
   }, [groupDevice]);
 
   const handleDeleteDevice = (id) => {
@@ -63,12 +62,14 @@ const ListGroupNested = ({ data, isListOpen, onClick, onDoubleClick }) => {
     const result = groupDevice.filter((list) => list.id !== data.id);
     const path = `users/${currentUserId}/groupDevices`;
     writeDataBase(path, result);
+    setOpenPopUp(false);
   };
 
   const handlePopUp = () => {
     setOpenPopUp(!openPopUp);
   };
 
+  // select layout when device on double click
   const handleSelectFindLayoutOnClick = (value) => {
     const newLayouts = [...layoutList];
     let indexLayout = null;
@@ -85,10 +86,11 @@ const ListGroupNested = ({ data, isListOpen, onClick, onDoubleClick }) => {
         }
       }
     });
+    
+    if (indexLayout === null) return;
     setSelecIndexOfLayout(indexLayout);
     dispatch(setIndexLayout(indexLayout));
   };
-
 
   return (
     <>

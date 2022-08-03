@@ -27,6 +27,7 @@ function DeviceProperties({ data }) {
 
   const [sendDataInterval, setSendDataInterval] = useState(0);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const [openModalDeleteDevice, setOpenModalDeleteDevice] = useState(false);
 
   const [isError, setIsError] = useState({ error: false, message: "" });
 
@@ -47,6 +48,13 @@ function DeviceProperties({ data }) {
 
     const path = `users/${currentUserId}/devices`;
     updateDataBase(path, newDevice);
+  };
+
+  const handleDeleteDevice = () => {
+    const newDevice = [...allDevice];
+    const deleteDevice = newDevice.filter((device) => device.id !== data.id);
+    const path = `users/${currentUserId}/devices`;
+    updateDataBase(path, deleteDevice);
   };
 
   const handleDeleteProperties = (ID) => {
@@ -125,8 +133,8 @@ function DeviceProperties({ data }) {
       {deviceProperties.map((data, index) => (
         <div key={index}>
           <Modal
-            open={openDeleteModal}
-            onClose={() => setOpenDeleteModal(false)}
+            open={openModalDeleteDevice}
+            onClose={() => setOpenModalDeleteDevice(false)}
             aria-labelledby="modal-modal-title"
             aria-describedby="modal-modal-description"
           >
@@ -145,7 +153,7 @@ function DeviceProperties({ data }) {
               <Stack direction="row" spacing={2} alignItems="center">
                 <Button
                   variant="outlined"
-                  onClick={() => setOpenDeleteModal(false)}
+                  onClick={() => setOpenModalDeleteDevice(false)}
                 >
                   Cancel
                 </Button>
@@ -173,12 +181,55 @@ function DeviceProperties({ data }) {
         </div>
       ))}
 
+      {/* modal delete device */}
+
+      <Modal
+        open={openDeleteModal}
+        onClose={() => setOpenDeleteModal(false)}
+        aria-labelledby="modal-title"
+        aria-describedby="description"
+      >
+        <div
+          style={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            backgroundColor: "#FFF",
+            padding: "20px",
+            borderRadius: "5px",
+            minHeight: "200px",
+            display: "flex",
+          }}
+        >
+          <Stack direction="row" spacing={2} alignItems="center">
+            <Button
+              variant="outlined"
+              onClick={() => setOpenDeleteModal(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="outlined"
+              onClick={() => {
+                handleDeleteDevice();
+                setOpenDeleteModal(false)
+                console.log("sssss")
+              }}
+            >
+              delete
+            </Button>
+          </Stack>
+        </div>
+      </Modal>
+
       <Stack
         direction="row"
         alignItems="center"
         mt={5}
+        spacing={5}
         justifyContent="flex-end"
       >
+        <Button onClick={() => setOpenDeleteModal(true)}>Delete</Button>
         <Button onClick={handleSubmit}>Update</Button>
       </Stack>
     </Box>

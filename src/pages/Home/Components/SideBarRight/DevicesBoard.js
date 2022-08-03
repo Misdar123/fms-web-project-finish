@@ -12,11 +12,8 @@ import FormNewDevice from "./Form/FormNewDevice";
 import ListAllDevices from "./List/ListAllDevices";
 import ListGroups from "./List/ListGroups";
 import ListLayouts from "./List/ListLayouts";
-import { useSelector } from "react-redux";
 
 const DevicesBoard = () => {
-  const { groupDevice } = useSelector((state) => state.devices);
-  const { layoutList } = useSelector((state) => state.layouts);
   const [openListGroup, setOpenListGroup] = useState(false);
   const [openListDevices, setOpenListDevices] = useState(true);
   const [openListLayout, setOpenListLayout] = useState(false);

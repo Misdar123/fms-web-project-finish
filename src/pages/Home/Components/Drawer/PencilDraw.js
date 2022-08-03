@@ -1,11 +1,18 @@
 import Konva from "konva";
 
-export const PencilDraw = ({ stage, layer, mode, color, stright }) => {
+export const PencilDraw = ({
+  stage,
+  layer,
+  mode,
+  color,
+  stright,
+  stop = false,
+}) => {
   if (stage === null) return;
   let isPaint = false;
   let lastLine;
   let strightLine;
-  let stopDraw = false;
+  let stopDraw = stop;
 
   stage.on("mousedown touchstart", function (e) {
     if (!stopDraw) {
@@ -49,7 +56,12 @@ export const PencilDraw = ({ stage, layer, mode, color, stright }) => {
     const pos = stage.getPointerPosition();
 
     if (stright) {
-      const points = [strightLine.points()[0], strightLine.points()[1], pos.x, pos.y];
+      const points = [
+        strightLine.points()[0],
+        strightLine.points()[1],
+        pos.x,
+        pos.y,
+      ];
       strightLine.points(points);
       layer.batchDraw();
     } else {

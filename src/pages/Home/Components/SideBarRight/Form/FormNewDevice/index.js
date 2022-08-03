@@ -109,7 +109,11 @@ function FormNewDevice({ openDialog, setOpenDialog }) {
     <div>
       <Dialog
         open={openDialog}
-        onClose={() => setOpenDialog(!openDialog)}
+        onClose={() => {
+          setOpenDialog(!openDialog);
+          setDeviceProperties([{}]);
+          setSendDataInterval(0)
+        }}
         fullWidth
       >
         <Stack
@@ -217,7 +221,15 @@ function FormNewDevice({ openDialog, setOpenDialog }) {
           ))}
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpenDialog(!openDialog)}>Cancel</Button>
+          <Button
+            onClick={() => {
+              setOpenDialog(!openDialog);
+              setDeviceProperties([{}]);
+              setSendDataInterval(0)
+            }}
+          >
+            Cancel
+          </Button>
           <Button onClick={handleSubmit}>Save</Button>
         </DialogActions>
       </Dialog>
@@ -248,6 +260,7 @@ const DevicePropertiesComponent = ({
   };
 
   const handleAddProperties = () => {
+    if (deviceProperties.length >= 4) return;
     setDeviceProperties([...deviceProperties, newDeviceProperties]);
   };
 

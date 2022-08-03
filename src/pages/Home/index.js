@@ -62,7 +62,8 @@ const Home = () => {
     textDraw,
     setTextDraw,
     changeThem,
-    selecIndexOfLayout, setSelecIndexOfLayout
+    selecIndexOfLayout,
+    setSelecIndexOfLayout,
   } = useContextApi();
   const { layoutList } = useSelector((state) => state.layouts);
   const { deviceDelete } = useSelector((state) => state.devices);
@@ -77,11 +78,9 @@ const Home = () => {
 
   const [openScreenCreatNewLayout, setOpenScreenCreatNewLayout] =
     useState(false);
-  
+
   const [undoShapes, setUndoShapes] = useState([]);
   const [redoShapes, setRedoShapes] = useState([]);
-
-  const [selectShapeDelete, setSelectShapeDelete] = useState({});
 
   const stageEl = createRef();
   const layerEl = createRef();
@@ -167,6 +166,8 @@ const Home = () => {
     setUndoShapes([...undoShapes, circelProperties]);
   };
 
+  
+  let stopDraw = false
   const drawLine = ({ isStright }) => {
     PencilDraw({
       name: "pencil",
@@ -175,6 +176,7 @@ const Home = () => {
       color: "#000",
       mode: "brush",
       stright: isStright,
+      stop : stopDraw
     });
   };
 
@@ -210,6 +212,7 @@ const Home = () => {
   };
 
   const handleSelectLineDropDown = (event) => {
+    stopDraw = stopDraw === true ? false : true
     switch (event.target.value) {
       case "pencil":
         drawLine({ isStright: false });
@@ -278,9 +281,9 @@ const Home = () => {
 
   const handleDeleteDevice = () => {
     if (deviceDelete === null) return;
-    
-    localStorage.removeItem(deviceDelete.device.macAddress)
-    
+
+    localStorage.removeItem(deviceDelete.device.macAddress);
+
     const newLayouts = [...layoutList];
     const layoutTarget = {
       ...layoutList.find((layout) => layout.id === deviceDelete.layoutId),
@@ -400,13 +403,13 @@ const Home = () => {
   }, [selecIndexOfLayout]);
 
   return (
-    <div onContextMenu={(e) => e.preventDefault()}>
+    <Box component="div"  onContextMenu={(e) => e.preventDefault()}>
       {/* content */}
-
       <CreatNewLayout
         openPopUp={openScreenCreatNewLayout}
         setOpenPopUp={setOpenScreenCreatNewLayout}
       />
+
       {/* tool bar */}
       <Stack
         mt={2}
@@ -559,7 +562,6 @@ const Home = () => {
                       isSelected={text.id === shapesSelected?.id}
                       onSelect={() => {
                         handleSelecShape(text);
-                        setSelectShapeDelete(text);
                       }}
                       onChange={(newAttrs) => {
                         const texts = textDraw.slice();
@@ -600,7 +602,6 @@ const Home = () => {
                       isSelected={circle.id === shapesSelected?.id}
                       onSelect={() => {
                         handleSelecShape(circle);
-                        setSelectShapeDelete(circle);
                       }}
                       onChange={(newAttrs) => {
                         const circs = circles.slice();
@@ -618,7 +619,6 @@ const Home = () => {
                       isSelected={image.id === shapesSelected?.id}
                       onSelect={() => {
                         handleSelecShape(image);
-                        setSelectShapeDelete(image);
                       }}
                       onChange={(newAttrs) => {
                         const imgs = images.slice();
@@ -649,7 +649,7 @@ const Home = () => {
         isDrawLock={lockSideBar}
         setIsDrawLock={setLockSideBar}
       />
-    </div>
+    </Box>
   );
 };
 

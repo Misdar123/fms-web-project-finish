@@ -82,8 +82,6 @@ function App() {
     setIsDataAvaliable(true);
   };
 
-  // localStorage.clear()
-
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       if (user?.emailVerified) {
@@ -118,7 +116,7 @@ function App() {
   };
 
   // window.addEventListener("beforeunload", function (e) {
-  //   handleLogout();
+  //   console.log("load")
   // });
 
   document.addEventListener("pointerdown", (event) => {
