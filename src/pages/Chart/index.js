@@ -50,16 +50,17 @@ export default function Chart() {
   const handleOpenMenuExport = (event) => {
     setAnchorEl(event.currentTarget);
   };
+
   const handleCloseMenuExport = () => {
     setAnchorEl(null);
   };
 
   const getDataFromDataBase = () => {
     if (!isDeviceExis) return;
-    if (!layoutList[selectLayoutIndex]?.devices) return;
-    const deviceRefrenceToDataBase = layoutList[selectLayoutIndex]?.devices.map(
+    if (!Array.isArray(layoutList[selectLayoutIndex].devices)) return;
+    const deviceRefrenceToDataBase = layoutList[selectLayoutIndex].devices.map(
       (data) => {
-        return { macAddress: data.macAddress, name: data.name };
+        return { macAddress: data.macAddress, deviceName: data.deviceName };
       }
     );
     readDataBase("devices/", (data) => {
@@ -67,7 +68,7 @@ export default function Chart() {
       deviceRefrenceToDataBase.forEach((value) => {
         const sensorsFilter = data[value.macAddress].sensor;
         sensorsFilter.forEach((sen) => {
-          sen.deviceName = value.name;
+          sen.deviceName = value.deviceName;
         });
         chartData.push(...sensorsFilter);
         setAllSensorName(sensorsFilter.map((sensor) => sensor.sensorName));
@@ -76,8 +77,6 @@ export default function Chart() {
       setChartData(chartData);
     });
   };
-
-  // console.log(chartData)
 
   const handleStartSelectDateTime = (newDateTime) => {
     setStartDateTime(newDateTime);
@@ -249,8 +248,8 @@ export default function Chart() {
             >
               {isDeviceExis &&
                 layoutList[selectLayoutIndex]?.devices.map((device, index) => (
-                  <MenuItem key={index} value={`@device_${device.name}`}>
-                    {device.name}
+                  <MenuItem key={index} value={`@device_${device.deviceName}`}>
+                    {device.deviceName}
                   </MenuItem>
                 ))}
               {allSensorName.map((data, index) => (
@@ -328,6 +327,10 @@ export default function Chart() {
         >
           {isDeviceExis &&
             chartData.map((value, index) => {
+              if (Array.isArray(value.log) && value.log.length >= 30) {
+                value.log = value.log.slice(-30);
+              }
+           
               return showAllSensors ? (
                 <Grid item xs={12} md={6} key={index}>
                   <CardChart
@@ -340,7 +343,7 @@ export default function Chart() {
               ) : (
                 <Grid item sm={12} md={12} key={index}>
                   <CardChart
-                    data={value.log}
+                    data={chartData}
                     title={value.deviceName}
                     sensorName={value.sensorName}
                     isShowAllSensors={showAllSensors}

@@ -19,14 +19,18 @@ import { useContextApi } from "../../../../lib/hooks/useContexApi";
 import DeviceComponent from "../deviceComponent";
 
 const CardDrop = ({
+  isError,
   item,
   onClick = () => null,
   onDoubleClick = () => null,
   isActive,
 }) => {
+
+  console.log(isError)
   const { changeThem } = useContextApi();
   const { publicDevice } = useSelector((state) => state.devices);
   const control = publicDevice[item?.macAddress]?.control || {};
+
   const divOverlay = useRef();
 
   const [offset, setOffset] = useState([100, 100]);
@@ -157,7 +161,10 @@ const CardDrop = ({
         style={{ position: "absolute" }}
       >
         <DeviceComponent
-          deviceStyle={{ border: isActive ? "2px solid dodgerblue" : "none" }}
+          deviceStyle={{
+            border: isActive ? "2px solid dodgerblue" : "none",
+            backgroundColor: isError ? "red" : "#8be9c6",
+          }}
           topLeftStyles={{
             backgroundColor: item.properties[0] ? "#ab30e4" : "#000",
           }}
@@ -181,7 +188,8 @@ const CardDrop = ({
           }}
         >
           {showSensorValue &&
-            item?.sensor.map((data, index) => (
+            Array.isArray(item.sensor) &&
+            item.sensor.map((data, index) => (
               <small
                 key={index}
                 style={{

@@ -187,7 +187,7 @@ const Login = () => {
             <Typography>Belum punya akun?</Typography>
             <Link
               style={{ paddingLeft: "10px", textDecoration: "none" }}
-              to="SignIn"
+              to="SignUp"
             >
               Buat akun
             </Link>

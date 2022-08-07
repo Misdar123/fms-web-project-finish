@@ -33,6 +33,9 @@ const DeviceWrapper = ({ children }) => {
 
   const addItemToDropList = (id) => {
     const result = dragItems.filter((item) => id === item.id);
+    if (result[0]?.macAddress === undefined) {
+      document.location.reload();
+    }
     const getAllMacAdress =
       JSON.parse(localStorage.getItem("allMacAddress")) || [];
     const isDeviceAlreadyExis = getAllMacAdress.includes(result[0].macAddress);
@@ -103,8 +106,7 @@ const DeviceWrapper = ({ children }) => {
         readDataBase(path, (data) => {
           getDeviceFromDataBase.push({
             ...data,
-            properties: item.properties,
-            macAddress: item.macAddress,
+            ...item,
           });
         });
       });
@@ -131,18 +133,39 @@ const DeviceWrapper = ({ children }) => {
   return (
     <div ref={dropRef} style={{ position: "relative" }}>
       {children}
-      {dropItems !== undefined &&
-        dropItems.map((item, index) => {
-          return (
-            <CardDrop
-              key={index}
-              item={item}
-              onClick={() => handleAddDeleteItemInRedux(index)}
-              isActive={selectIndexDropItem === index}
-              onDoubleClick={handleOnDoubleClick}
-            />
-          );
-        })}
+
+      {dropItems.map((item, index) => {
+        const publicDeviceRef = publicDevice[item.macAddress];
+
+        const sensorPublic = publicDeviceRef.sensor.map(
+          (data) => data.properties
+        );
+
+        let isMatch = false;
+  
+        if (item.properties.length === sensorPublic.length) {
+          for (let i = 0; sensorPublic.length < i; i++) {
+            isMatch =
+              item.properties[i].IOType.toUpperCase() ===
+                sensorPublic[i].IOType.toUpperCase() &&
+              item.properties[i].modularIO.toUpperCase() ===
+                sensorPublic[i].modularIO.toUpperCase() &&
+              item.properties[i].sensorType.toUpperCase() ===
+                sensorPublic[i].sensorType.toUpperCase();
+          }
+        }
+
+        return (
+          <CardDrop
+            key={index}
+            item={item}
+            isError={isMatch}
+            onClick={() => handleAddDeleteItemInRedux(index)}
+            isActive={selectIndexDropItem === index}
+            onDoubleClick={handleOnDoubleClick}
+          />
+        );
+      })}
     </div>
   );
 };

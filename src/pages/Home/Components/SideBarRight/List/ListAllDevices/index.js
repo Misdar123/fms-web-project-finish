@@ -64,7 +64,7 @@ const ListAllDevices = ({ onOpen, open }) => {
     setSelecIndexOfLayout(indexLayout);
     dispatch(setIndexLayout(indexLayout));
   };
-
+  
   return (
     <>
       <ListItemButton onClick={onOpen}>

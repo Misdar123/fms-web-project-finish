@@ -21,7 +21,6 @@ const CardChart = ({ data, title, sensorName, isShowAllSensors }) => {
   const { changeThem } = useContextApi();
   const bgColor = changeThem ? "#001e3c" : "#fff";
   const colorThem = changeThem ? "#FFF" : "#000";
-
   const { user } = useSelector((state) => state.user);
 
   const isSmallBreakPoint = useMediaQuery((theme) =>
@@ -222,6 +221,7 @@ const CardChart = ({ data, title, sensorName, isShowAllSensors }) => {
               stroke=" dodgerblue"
               fillOpacity={1}
               fill="url(#color3)"
+              isAnimationActive={false}
             />
           ) : (
             <>
@@ -231,6 +231,7 @@ const CardChart = ({ data, title, sensorName, isShowAllSensors }) => {
                 stroke="#8884d8"
                 fillOpacity={1}
                 fill="url(#color1)"
+                isAnimationActive={false}
               />
               <Area
                 type="monotone"
@@ -238,6 +239,7 @@ const CardChart = ({ data, title, sensorName, isShowAllSensors }) => {
                 stroke="#82ca9d"
                 fillOpacity={1}
                 fill="url(#color2)"
+                isAnimationActive={false}
               />
               <Area
                 type="monotone"
@@ -245,6 +247,7 @@ const CardChart = ({ data, title, sensorName, isShowAllSensors }) => {
                 stroke="dodgerblue"
                 fillOpacity={1}
                 fill="url(#color3)"
+                isAnimationActive={false}
               />
             </>
           )}

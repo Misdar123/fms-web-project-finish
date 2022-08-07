@@ -65,16 +65,17 @@ function App() {
     setCurrentUserId(stringRegex(data?.email));
 
     // get all macAdress device for check duplicated device
-    if (data.layouts !== undefined) {
+    if (Array.isArray(data.layouts)) {
       const findDeviceExisInLayout = [];
       data.layouts.forEach((data) => {
-        if (data.devices !== undefined) {
+        if ( Array.isArray((data.devices ))) {
           findDeviceExisInLayout.push(...data.devices);
         }
       });
       const allMacAddress = findDeviceExisInLayout.map(
         (item) => item.macAddress
       );
+
       localStorage.setItem("allMacAddress", JSON.stringify(allMacAddress));
     } else {
       localStorage.setItem("allMacAddress", JSON.stringify([]));
@@ -114,10 +115,6 @@ function App() {
       setIsAuth(false);
     });
   };
-
-  // window.addEventListener("beforeunload", function (e) {
-  //   console.log("load")
-  // });
 
   document.addEventListener("pointerdown", (event) => {
     if (event.pointerType === "mouse") {
@@ -201,7 +198,7 @@ function App() {
             ) : (
               <Routes>
                 <Route index element={<Login />} />
-                <Route path="SignIn" element={<SignIn />} />
+                <Route path="SignUp" element={<SignIn />} />
                 <Route path="*" element={<NoPage />} />
               </Routes>
             )}

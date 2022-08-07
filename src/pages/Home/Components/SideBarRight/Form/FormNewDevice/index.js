@@ -82,7 +82,7 @@ function FormNewDevice({ openDialog, setOpenDialog }) {
     const path = `users/${currentUserId}/devices`;
     const data = {
       id: Date.now(),
-      name: deviceName,
+      deviceName: deviceName,
       macAddress,
       sendDataInterval,
       properties: deviceProperties,

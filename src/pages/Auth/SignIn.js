@@ -157,7 +157,7 @@ const SignIn = () => {
               color="primary"
               fontWeight={"bold"}
             >
-              Sign In
+              Sign Up
             </Typography>
             <form
               onSubmit={handleSubmit}
@@ -235,7 +235,7 @@ const SignIn = () => {
                 }}
                 variant="contained"
               >
-                Sign In
+                Sign Up
               </Button>
             </form>
             <Stack direction="row" alignItems="center" mt={5}>

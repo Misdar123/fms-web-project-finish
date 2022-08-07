@@ -217,7 +217,7 @@ const Settings = () => {
                     aria-controls="panel1a-content"
                     id="panel1a-header"
                   >
-                    <Typography>{data.name}</Typography>
+                    <Typography>{data.deviceName}</Typography>
                   </AccordionSummary>
                   <AccordionDetails>
                     <DeviceProperties data={data} />
