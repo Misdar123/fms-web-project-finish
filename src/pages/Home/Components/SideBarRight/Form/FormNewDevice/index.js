@@ -37,7 +37,7 @@ function FormNewDevice({ openDialog, setOpenDialog }) {
   const [isError, setIsError] = useState({ error: false, message: "" });
 
   const [deviceProperties, setDeviceProperties] = useState([
-    { ID: Date.now(), modularIO: "", IOType: "", sensorType: "" },
+    { ID: Date.now(), modularType: "", IOType: "", sensorType: "" },
   ]);
 
   const handleSubmit = () => {
@@ -66,7 +66,7 @@ function FormNewDevice({ openDialog, setOpenDialog }) {
       let result = false;
       deviceProperties.forEach((device) => {
         if (
-          device.modularIO === "" ||
+          device.modularType === "" ||
           device.IOType === "" ||
           device.sensorType === ""
         ) {
@@ -244,17 +244,17 @@ const DevicePropertiesComponent = ({
   index,
   dialogRef,
 }) => {
-  const [expandModularIO, setExpandModularIO] = useState(null);
+  const [expandModularType, setExpandModularType] = useState(null);
   const [expandIOType, setExpandIOType] = useState(null);
   const [showExpendIcon, setShowExpandIcon] = useState(false);
 
-  const [modularIO, setModularIO] = useState("");
+  const [modularType, setModularType] = useState("");
   const [IOType, setIOType] = useState("");
   const [sensorType, setSensorType] = useState("");
 
   const newDeviceProperties = {
     ID: Date.now(),
-    modularIO,
+    modularType,
     IOType,
     sensorType,
   };
@@ -267,11 +267,11 @@ const DevicePropertiesComponent = ({
   useEffect(() => {
     deviceProperties[index] = newDeviceProperties;
     setDeviceProperties(deviceProperties);
-  }, [modularIO, IOType, sensorType]);
+  }, [modularType, IOType, sensorType]);
 
-  const handleChangeModularIO = (event) => {
-    setModularIO(event.target.value);
-    setExpandModularIO(true);
+  const handleChangeModularType = (event) => {
+    setModularType(event.target.value);
+    setExpandModularType(true);
   };
 
   const handleChangeIOType = (event) => {
@@ -284,9 +284,9 @@ const DevicePropertiesComponent = ({
   };
 
   const handleOpenAndCloseExpand = () => {
-    if (modularIO === null) return;
+    if (modularType === null) return;
     setExpandIOType(!expandIOType);
-    setExpandModularIO(!expandModularIO);
+    setExpandModularType(!expandModularType);
   };
 
   return (
@@ -304,9 +304,9 @@ const DevicePropertiesComponent = ({
           <Select
             labelId="demo-simple-select-label"
             id="demo-simple-select"
-            value={modularIO}
+            value={modularType}
             label="modular type"
-            onChange={handleChangeModularIO}
+            onChange={handleChangeModularType}
           >
             <MenuItem value={"Input"}>Input</MenuItem>
             <MenuItem value={"Output"}>Output</MenuItem>
@@ -342,7 +342,7 @@ const DevicePropertiesComponent = ({
         </Stack>
       </Stack>
 
-      {expandModularIO && (
+      {expandModularType && (
         <Stack spacing={1} direction="row" mt={2} alignItems="center">
           <FormControl fullWidth>
             <InputLabel id="demo-simple-select-label">IO Type</InputLabel>
@@ -362,7 +362,7 @@ const DevicePropertiesComponent = ({
 
       {expandIOType && (
         <Stack spacing={1} direction="row" mt={2} alignItems="center">
-          {modularIO === "Input" ? (
+          {modularType === "Input" ? (
             <FormControl fullWidth>
               <InputLabel id="demo-simple-select-label">sensor type</InputLabel>
               <Select

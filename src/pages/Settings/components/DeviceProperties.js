@@ -1,7 +1,15 @@
 import React, { useEffect, useState } from "react";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
-import { colors, IconButton, Stack, Typography, Box } from "@mui/material";
+import {
+  colors,
+  IconButton,
+  Stack,
+  Typography,
+  Box,
+  Collapse,
+  Alert,
+} from "@mui/material";
 import { useSelector } from "react-redux";
 
 import { updateDataBase } from "../../../lib/function/dataBaseCRUD";
@@ -33,6 +41,12 @@ function DeviceProperties({ data }) {
 
   const [deviceProperties, setDeviceProperties] = useState([]);
 
+  const [displayAlert, setIsDisplayAlert] = useState({
+    visible: false,
+    type: "success",
+    message: "",
+  });
+
   const handleSubmit = () => {
     const newDevice = allDevice.slice();
 
@@ -48,6 +62,16 @@ function DeviceProperties({ data }) {
 
     const path = `users/${currentUserId}/devices`;
     updateDataBase(path, newDevice);
+
+    setIsDisplayAlert({
+      visible: true,
+      type: "success",
+      message: "update sucsess",
+    });
+
+    setTimeout(() => {
+      setIsDisplayAlert({ visible: false, type: "success", message: "" });
+    }, 2000);
   };
 
   const handleDeleteDevice = () => {
@@ -65,7 +89,7 @@ function DeviceProperties({ data }) {
   };
 
   useEffect(() => {
-    setDeviceName(data.name);
+    setDeviceName(data.deviceName);
     setMacAddress(data.macAddress);
     setSendDataInterval(data.sendDataInterval);
     const properties = [...data.properties];
@@ -212,8 +236,8 @@ function DeviceProperties({ data }) {
               variant="outlined"
               onClick={() => {
                 handleDeleteDevice();
-                setOpenDeleteModal(false)
-                console.log("sssss")
+                setOpenDeleteModal(false);
+                console.log("sssss");
               }}
             >
               delete
@@ -232,6 +256,12 @@ function DeviceProperties({ data }) {
         <Button onClick={() => setOpenDeleteModal(true)}>Delete</Button>
         <Button onClick={handleSubmit}>Update</Button>
       </Stack>
+
+      <Box sx={{ position: "absolute", bottom: -100, left: -100, zIndex: 5 }}>
+        <Collapse in={displayAlert.visible}>
+          <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
+        </Collapse>
+      </Box>
     </Box>
   );
 }
@@ -243,23 +273,22 @@ const DevicePropertiesComponent = ({
   data,
   index,
 }) => {
-  const [expandModularIO, setExpandModularIO] = useState(null);
-  const [expandIOType, setExpandIOType] = useState(null);
+  const [expandModularType, setExpandModularType] = useState(null);
   const [showExpendIcon, setShowExpandIcon] = useState(false);
 
-  const [modularIO, setModularIO] = useState("");
+  const [modularType, setModularType] = useState("");
   const [IOType, setIOType] = useState("");
   const [sensorType, setSensorType] = useState("");
 
   useEffect(() => {
-    setModularIO(data.modularIO);
+    setModularType(data.modularType);
     setIOType(data.IOType);
     setSensorType(data.sensorType);
   }, []);
 
   const newDeviceProperties = {
     ID: Date.now(),
-    modularIO,
+    modularType,
     IOType,
     sensorType,
   };
@@ -267,16 +296,15 @@ const DevicePropertiesComponent = ({
   useEffect(() => {
     deviceProperties[index] = newDeviceProperties;
     setDeviceProperties(deviceProperties);
-  }, [modularIO, IOType, sensorType]);
+  }, [modularType, IOType, sensorType]);
 
-  const handleChangeModularIO = (event) => {
-    setModularIO(event.target.value);
-    setExpandModularIO(true);
+  const handleChangeModularType = (event) => {
+    setModularType(event.target.value);
+    setExpandModularType(true);
   };
 
   const handleChangeIOType = (event) => {
     setIOType(event.target.value);
-    setExpandIOType(true);
   };
 
   const handleChangeSensorType = (event) => {
@@ -284,9 +312,8 @@ const DevicePropertiesComponent = ({
   };
 
   const handleOpenAndCloseExpand = () => {
-    if (modularIO === null) return;
-    setExpandIOType(!expandIOType);
-    setExpandModularIO(!expandModularIO);
+    if (modularType === null) return;
+    setExpandModularType(!expandModularType);
   };
 
   return (
@@ -302,9 +329,9 @@ const DevicePropertiesComponent = ({
           <Select
             labelId="demo-simple-select-label"
             id="demo-simple-select"
-            value={modularIO}
+            value={modularType}
             label="modular type"
-            onChange={handleChangeModularIO}
+            onChange={handleChangeModularType}
             sx={{ height: { xs: "30px", md: "50px" } }}
           >
             <MenuItem value={"Input"}>Input</MenuItem>
@@ -335,7 +362,7 @@ const DevicePropertiesComponent = ({
         </Stack>
       </Stack>
 
-      {expandModularIO && (
+      {expandModularType && (
         <Stack
           spacing={1}
           direction={{ xs: "column", sm: "row" }}
@@ -359,7 +386,7 @@ const DevicePropertiesComponent = ({
         </Stack>
       )}
 
-      {expandIOType && (
+      {expandModularType && (
         <Stack
           spacing={1}
           direction={{ xs: "column", sm: "row" }}

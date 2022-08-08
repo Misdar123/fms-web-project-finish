@@ -496,9 +496,9 @@ const Home = () => {
         <IconButton onClick={drawImage}>
           <InsertPhotoIcon />
         </IconButton>
-        <IconButton onClick={addText}>
+        {/* <IconButton onClick={addText}>
           <TextFieldsIcon />
-        </IconButton>
+        </IconButton> */}
         <IconButton onClick={undo}>
           <UndoIcon />
         </IconButton>

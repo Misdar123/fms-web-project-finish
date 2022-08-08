@@ -31,14 +31,14 @@ const CardDrag = ({
           backgroundColor: data.properties[1] ? "#ff9925" : "black",
         }}
         bottomLeftStyles={{
-          backgroundColor: data.properties[2] ? "#FF2782" : "black",
+          backgroundColor: data.properties[3] ? "#FF2782" : "black",
         }}
         botomRightStyles={{
-          backgroundColor: data.properties[3] ? "#34dd9f" : "black",
+          backgroundColor: data.properties[2] ? "#34dd9f" : "black",
         }}
       />
 
-      <small style={{ textAlign: "center" }}>{data?.name}</small>
+      <small style={{ textAlign: "center" }}>{data?.deviceName}</small>
     </div>
   );
 };

@@ -1,8 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import {
-  updateDataBase,
-  readDataBase,
-} from "../../../../lib/function/dataBaseCRUD";
+import { updateDataBase } from "../../../../lib/function/dataBaseCRUD";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import {
@@ -17,16 +14,17 @@ import { Slider } from "@mui/material";
 import { useSelector } from "react-redux";
 import { useContextApi } from "../../../../lib/hooks/useContexApi";
 import DeviceComponent from "../deviceComponent";
+import useSound from "use-sound";
+import errorSound from "../../assets/sounds/errorSound.mp3";
 
 const CardDrop = ({
   isError,
+  errorMessage,
   item,
   onClick = () => null,
   onDoubleClick = () => null,
   isActive,
 }) => {
-
-  console.log(isError)
   const { changeThem } = useContextApi();
   const { publicDevice } = useSelector((state) => state.devices);
   const control = publicDevice[item?.macAddress]?.control || {};
@@ -43,6 +41,18 @@ const CardDrop = ({
 
   const defaultRangeTimer = parseInt(control.rangeTimer);
   const defaultRangeLog = parseInt(control.rangeLog);
+
+  const [play, { stop }] = useSound(errorSound);
+
+  useEffect(() => {
+    if (!isError) return;
+    let stopSound = true;
+    const clear = setInterval(() => {
+      stopSound ? play() : stop();
+      stopSound = stopSound ? false : true;
+    }, 5000);
+    return () => clearInterval(clear);
+  });
 
   const openPopUpSettingDevice = Boolean(anchorEl);
 
@@ -132,8 +142,10 @@ const CardDrop = ({
       divOverlay.current.style.left = result.position.left;
       divOverlay.current.style.top = result.position.top;
     } else {
-      divOverlay.current.style.left = "100px";
-      divOverlay.current.style.top = "100px";
+      const left = Math.floor(Math.random() * 300);
+      const top = Math.floor(Math.random() * 300);
+      divOverlay.current.style.left = `${left}px`;
+      divOverlay.current.style.top = `${top}px`;
     }
   }, [item]);
 
@@ -161,9 +173,9 @@ const CardDrop = ({
         style={{ position: "absolute" }}
       >
         <DeviceComponent
+          isError={isError}
           deviceStyle={{
             border: isActive ? "2px solid dodgerblue" : "none",
-            backgroundColor: isError ? "red" : "#8be9c6",
           }}
           topLeftStyles={{
             backgroundColor: item.properties[0] ? "#ab30e4" : "#000",
@@ -172,10 +184,10 @@ const CardDrop = ({
             backgroundColor: item.properties[1] ? "#ff9925" : "#000",
           }}
           bottomLeftStyles={{
-            backgroundColor: item.properties[2] ? "#FF2782" : "#000",
+            backgroundColor: item.properties[3] ? "#FF2782" : "#000",
           }}
           botomRightStyles={{
-            backgroundColor: item.properties[3] ? "#34dd9f" : "#000",
+            backgroundColor: item.properties[2] ? "#34dd9f" : "#000",
           }}
         />
         <div
@@ -188,6 +200,7 @@ const CardDrop = ({
           }}
         >
           {showSensorValue &&
+            !isError &&
             Array.isArray(item.sensor) &&
             item.sensor.map((data, index) => (
               <small
@@ -199,6 +212,17 @@ const CardDrop = ({
                 {data.sensorName} : {data.value}
               </small>
             ))}
+
+          {showSensorValue && isError && (
+            <small
+              style={{
+                color: "rgb(241, 79, 79)",
+                maxWidth: "150px",
+              }}
+            >
+              {errorMessage}
+            </small>
+          )}
         </div>
       </div>
 

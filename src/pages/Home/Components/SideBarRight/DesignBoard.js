@@ -1,5 +1,5 @@
 import { Divider, Stack, Typography } from "@mui/material";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useContextApi } from "../../../../lib/hooks/useContexApi";
 import ColorPicker from "../ColorPicker";
@@ -16,8 +16,6 @@ const DesignBoard = ({ printComponentRef }) => {
     setRectangles,
     circles,
     setCircles,
-    images,
-    setImages,
     zoomSquare,
     setZoomSquare,
   } = useContextApi();

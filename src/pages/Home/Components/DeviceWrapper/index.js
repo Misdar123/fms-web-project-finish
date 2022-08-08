@@ -67,25 +67,10 @@ const DeviceWrapper = ({ children }) => {
 
     if (dropItems.length === 0) return;
 
-    const layouts = [...layoutList];
-    const indexOfAllLayout = layouts.map((layout) => layout.id);
-    const indexLayout = indexOfAllLayout.indexOf(newLayoutData.id);
+    const dataToSave = dragItems.map((data) => data.macAddress);
 
-    if (indexLayout === -1) {
-      const data = { ...newLayoutData, devices: dropItems };
-      const path = `users/${currentUserId}/layouts/`;
-      updateDataBase(path, [...layouts, data]);
-    } else {
-      let layoutTarget = layouts.find(
-        (layout) => layout.id === newLayoutData.id
-      );
-
-      layoutTarget = { ...newLayoutData, devices: dropItems };
-      layouts[indexLayout] = layoutTarget;
-
-      const path = `users/${currentUserId}/layouts/`;
-      updateDataBase(path, layouts);
-    }
+    const path = `users/${currentUserId}/layouts/${layoutIndexSelected}`;
+    updateDataBase(path, { ...newLayoutData, devices: dropItems });
   }, [dropItems]);
 
   // find refrence drop item device in all device list
@@ -141,25 +126,46 @@ const DeviceWrapper = ({ children }) => {
           (data) => data.properties
         );
 
-        let isMatch = false;
-  
-        if (item.properties.length === sensorPublic.length) {
-          for (let i = 0; sensorPublic.length < i; i++) {
-            isMatch =
+        let isMatch = true;
+        let errorMessage = "";
+
+        for (let i = 0; sensorPublic.length > i; i++) {
+          if (isMatch) {
+            const modularType =
+              item.properties[i].modularType.toUpperCase() ===
+              sensorPublic[i].modularType.toUpperCase();
+
+            if (!modularType) {
+              errorMessage = "modularType not match at position " + (i + 1);
+            }
+
+            const IOType =
               item.properties[i].IOType.toUpperCase() ===
-                sensorPublic[i].IOType.toUpperCase() &&
-              item.properties[i].modularIO.toUpperCase() ===
-                sensorPublic[i].modularIO.toUpperCase() &&
+              sensorPublic[i].IOType.toUpperCase();
+            if (!IOType) {
+              errorMessage = "IOType not match at position " + (i + 1);
+            }
+
+            const sensorType =
               item.properties[i].sensorType.toUpperCase() ===
-                sensorPublic[i].sensorType.toUpperCase();
+              sensorPublic[i].sensorType.toUpperCase();
+
+            if (!sensorType) {
+              errorMessage = "sensorType not match at position " + (i + 1);
+            }
+
+            isMatch = IOType && modularType && sensorType;
+
+            // console.log(`${index} : ${IOType} ${modularType} ${sensorType}`)
           }
         }
 
         return (
           <CardDrop
             key={index}
+            errorMessage={errorMessage}
             item={item}
-            isError={isMatch}
+            isError={!isMatch}
             onClick={() => handleAddDeleteItemInRedux(index)}
             isActive={selectIndexDropItem === index}
             onDoubleClick={handleOnDoubleClick}
