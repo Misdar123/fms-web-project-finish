@@ -153,7 +153,7 @@ export default function FormNewGroup({ openDialog, setOpenDialog }) {
                             : "#000",
                         }}
                       />
-                      <ListItemText id={labelId} primary={value.name} />
+                      <ListItemText id={labelId} primary={value.deviceName} />
                     </ListItemButton>
                   </ListItem>
                 );

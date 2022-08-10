@@ -8,6 +8,7 @@ import {
 } from "../../../../lib/function/dataBaseCRUD";
 import { useDispatch, useSelector } from "react-redux";
 import { addDeviceDelete } from "../../../../redux/features/deviceSlice";
+import { useGetRealDevices } from "../../../../lib/hooks/useGetRealDevices";
 
 const DeviceWrapper = ({ children }) => {
   const dispatch = useDispatch();
@@ -67,26 +68,23 @@ const DeviceWrapper = ({ children }) => {
 
     if (dropItems.length === 0) return;
 
-    const dataToSave = dragItems.map((data) => data.macAddress);
+    const dataToSave = dragItems.map((data) => {
+      return { macAddress: data.macAddress, id: data.id };
+    });
 
     const path = `users/${currentUserId}/layouts/${layoutIndexSelected}`;
-    updateDataBase(path, { ...newLayoutData, devices: dropItems });
+    updateDataBase(path, { ...newLayoutData, devices: dataToSave });
   }, [dropItems]);
 
   // find refrence drop item device in all device list
+
+  const [deviceRefRence] = useGetRealDevices();
+
   useEffect(() => {
     setDropItems([]);
     if (Array.isArray(newLayoutData?.devices)) {
-      const deviceRefrence = [];
-      newLayoutData.devices.forEach((device) => {
-        const findDeviceRefrence = allDevice.filter(
-          (deviceItem) => deviceItem.macAddress === device.macAddress
-        );
-        deviceRefrence.push(...findDeviceRefrence);
-      });
-
       const getDeviceFromDataBase = [];
-      deviceRefrence.forEach((item) => {
+      deviceRefRence(newLayoutData.devices).forEach((item) => {
         const path = `devices/${item.macAddress}`;
         readDataBase(path, (data) => {
           getDeviceFromDataBase.push({
@@ -122,41 +120,61 @@ const DeviceWrapper = ({ children }) => {
       {dropItems.map((item, index) => {
         const publicDeviceRef = publicDevice[item.macAddress];
 
-        const sensorPublic = publicDeviceRef.sensor.map(
-          (data) => data.properties
-        );
+        if (!Array.isArray(publicDeviceRef.sensor)) return;
+
+        const PublicSensors = publicDeviceRef.sensor.map((data) => data);
 
         let isMatch = true;
         let errorMessage = "";
+        let isWarning = false;
+        let isSensorActive = true;
 
-        for (let i = 0; sensorPublic.length > i; i++) {
+        for (let i = 0; PublicSensors.length > i; i++) {
+          if (PublicSensors[i].value >= item.properties[i].sensorLimit) {
+            isWarning = true;
+            const port = PublicSensors[i].properties.port;
+            errorMessage = { message: "over limit", port };
+          }
+
+          if (!PublicSensors[i].isActive) {
+            isSensorActive = false;
+            const sensorName = PublicSensors[i].sensorName;
+            const port = PublicSensors[i].properties.port;
+            const message = `${sensorName} (Port ${port}) is not detected, please check your device (${item.deviceName})`;
+            errorMessage = { port, message };
+          }
+
           if (isMatch) {
             const modularType =
               item.properties[i].modularType.toUpperCase() ===
-              sensorPublic[i].modularType.toUpperCase();
+              PublicSensors[i].properties.modularType.toUpperCase();
 
             if (!modularType) {
-              errorMessage = "modularType not match at position " + (i + 1);
+              const port = PublicSensors[i].properties.port;
+              const message = "modularType not match at position " + port;
+              errorMessage = { port, message };
             }
 
             const IOType =
               item.properties[i].IOType.toUpperCase() ===
-              sensorPublic[i].IOType.toUpperCase();
+              PublicSensors[i].properties.IOType.toUpperCase();
             if (!IOType) {
-              errorMessage = "IOType not match at position " + (i + 1);
+              const port = PublicSensors[i].properties.port;
+              const message = "IOType not match at position " + port;
+              errorMessage = { port, message };
             }
 
             const sensorType =
               item.properties[i].sensorType.toUpperCase() ===
-              sensorPublic[i].sensorType.toUpperCase();
+              PublicSensors[i].properties.sensorType.toUpperCase();
 
             if (!sensorType) {
-              errorMessage = "sensorType not match at position " + (i + 1);
+              const port = PublicSensors[i].properties.port;
+              const message = "sensorType not match at position " + port;
+              errorMessage = { port, message };
             }
 
             isMatch = IOType && modularType && sensorType;
-
-            // console.log(`${index} : ${IOType} ${modularType} ${sensorType}`)
           }
         }
 
@@ -165,7 +183,8 @@ const DeviceWrapper = ({ children }) => {
             key={index}
             errorMessage={errorMessage}
             item={item}
-            isError={!isMatch}
+            isError={!isMatch || !isSensorActive}
+            isWarning={isWarning}
             onClick={() => handleAddDeleteItemInRedux(index)}
             isActive={selectIndexDropItem === index}
             onDoubleClick={handleOnDoubleClick}

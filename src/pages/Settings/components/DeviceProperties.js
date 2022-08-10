@@ -52,7 +52,7 @@ function DeviceProperties({ data }) {
 
     const target = newDevice.find((device) => device.id === data.id);
     const deviceTarget = { ...target };
-    deviceTarget.name = deviceName;
+    deviceTarget.deviceName = deviceName;
     deviceTarget.sendDataInterval = sendDataInterval;
     deviceTarget.properties = deviceProperties;
 
@@ -279,11 +279,13 @@ const DevicePropertiesComponent = ({
   const [modularType, setModularType] = useState("");
   const [IOType, setIOType] = useState("");
   const [sensorType, setSensorType] = useState("");
+  const [sensorLimit, setSensorLimit] = useState(0);
 
   useEffect(() => {
     setModularType(data.modularType);
     setIOType(data.IOType);
     setSensorType(data.sensorType);
+    setSensorLimit(data.sensorLimit);
   }, []);
 
   const newDeviceProperties = {
@@ -291,12 +293,13 @@ const DevicePropertiesComponent = ({
     modularType,
     IOType,
     sensorType,
+    sensorLimit
   };
 
   useEffect(() => {
     deviceProperties[index] = newDeviceProperties;
     setDeviceProperties(deviceProperties);
-  }, [modularType, IOType, sensorType]);
+  }, [modularType, IOType, sensorType, sensorLimit]);
 
   const handleChangeModularType = (event) => {
     setModularType(event.target.value);
@@ -317,7 +320,18 @@ const DevicePropertiesComponent = ({
   };
 
   return (
-    <Stack mt={2}>
+    <Stack mt={2} style={{border: "1px solid #e5e5e5", padding: "10px"}}>
+      <Stack direction="row" mb={2} mt={2} spacing={2} pr={5}>
+        <Typography sx={{ fontWeight: "bold" }}>Limit</Typography>
+        <Slider
+          defaultValue={10}
+          value={sensorLimit}
+          aria-label="Default"
+          valueLabelDisplay="auto"
+          onChange={(e) => setSensorLimit(e.target.value)}
+        />
+        <Typography>{sensorLimit}</Typography>
+      </Stack>
       <Stack
         spacing={1}
         direction={"row"}

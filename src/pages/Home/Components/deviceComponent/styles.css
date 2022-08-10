@@ -50,7 +50,7 @@
     background-color: #34dd9f;
   }
 
-.error {
+.rippleEffect {
   display: inline-block;
   width: 65px;
   height: 65px;
@@ -60,7 +60,7 @@
   z-index: 10;
 }
 
-.error::before {
+.rippleEffect::before {
   content: "";
   position: absolute;
   width: 100%;
@@ -71,11 +71,11 @@
   animation: ripple 1.5s ease-out infinite;
 }
 
-.error:first-child {
+.rippleEffect:first-child {
   background-color: red;
 }
 
-.error:first-child::before {
+.rippleEffect:first-child::before {
   animation-delay: 0.1s;
 }
 

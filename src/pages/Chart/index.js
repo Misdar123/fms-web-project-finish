@@ -22,6 +22,7 @@ import { useContextApi } from "../../lib/hooks/useContexApi";
 import EmptyChartAnimation from "./components/EmptyChartAnimation";
 
 import Menu from "@mui/material/Menu";
+import { useGetRealDevices } from "../../lib/hooks/useGetRealDevices";
 
 export default function Chart() {
   const [selectLayoutIndex, setSelectLayoutIndex] = useState(0);
@@ -30,6 +31,7 @@ export default function Chart() {
   const [chartData, setChartData] = useState([]);
   const [allChartData, setAllChartData] = useState([]);
   const [allSensorName, setAllSensorName] = useState([]);
+  const [allDeviceNames, setAllDeviceNames] = useState([]);
 
   const [selectdeviceProperties, setSelectDeviceProperties] = useState("");
   const [showAllSensors, setShowAllSensors] = useState(true);
@@ -55,26 +57,26 @@ export default function Chart() {
     setAnchorEl(null);
   };
 
+  const [deviceRefRence] = useGetRealDevices();
   const getDataFromDataBase = () => {
     if (!isDeviceExis) return;
-    if (!Array.isArray(layoutList[selectLayoutIndex].devices)) return;
-    const deviceRefrenceToDataBase = layoutList[selectLayoutIndex].devices.map(
-      (data) => {
-        return { macAddress: data.macAddress, deviceName: data.deviceName };
-      }
-    );
+    const deviceInsideLayout = layoutList[selectLayoutIndex].devices;
+    if (!Array.isArray(deviceInsideLayout)) return;
+
     readDataBase("devices/", (data) => {
       const chartData = [];
-      deviceRefrenceToDataBase.forEach((value) => {
+      deviceRefRence(deviceInsideLayout).forEach((value) => {
         const sensorsFilter = data[value.macAddress].sensor;
-        sensorsFilter.forEach((sen) => {
-          sen.deviceName = value.deviceName;
+        sensorsFilter.forEach((sensor) => {
+          sensor.deviceName = value.deviceName;
         });
         chartData.push(...sensorsFilter);
         setAllSensorName(sensorsFilter.map((sensor) => sensor.sensorName));
       });
+
       setAllChartData(chartData);
       setChartData(chartData);
+      setAllDeviceNames([...new Set(chartData.map((data) => data.deviceName))]);
     });
   };
 
@@ -247,14 +249,14 @@ export default function Chart() {
               inputProps={{ "aria-label": "Without label" }}
             >
               {isDeviceExis &&
-                layoutList[selectLayoutIndex]?.devices.map((device, index) => (
-                  <MenuItem key={index} value={`@device_${device.deviceName}`}>
-                    {device.deviceName}
+                allDeviceNames.map((name, index) => (
+                  <MenuItem key={index} value={`@device_${name}`}>
+                    {name}
                   </MenuItem>
                 ))}
-              {allSensorName.map((data, index) => (
-                <MenuItem key={index} value={`@sensor_${data}`}>
-                  All {data}
+              {allSensorName.map((name, index) => (
+                <MenuItem key={index} value={`@sensor_${name}`}>
+                  All {name}
                 </MenuItem>
               ))}
             </Select>
@@ -330,7 +332,7 @@ export default function Chart() {
               if (Array.isArray(value.log) && value.log.length >= 30) {
                 value.log = value.log.slice(-30);
               }
-           
+
               return showAllSensors ? (
                 <Grid item xs={12} md={6} key={index}>
                   <CardChart

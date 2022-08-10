@@ -48,6 +48,8 @@ function App() {
   const [textDraw, setTextDraw] = useState([]);
   const [zoomSquare, setZoomSquare] = useState(1);
 
+  const [notificationMessage, setNotificationMessage] = useState([]);
+
   const [deviceInGroups, setDeviceInGroups] = useState([]);
 
   const [selecIndexOfLayout, setSelecIndexOfLayout] = useState(0);
@@ -63,12 +65,13 @@ function App() {
     dispatch(insertUsers(data));
     dispatch(insertLayout(data?.layouts || []));
     setCurrentUserId(stringRegex(data?.email));
+    setNotificationMessage(data?.notification || [])
 
     // get all macAdress device for check duplicated device
     if (Array.isArray(data.layouts)) {
       const findDeviceExisInLayout = [];
       data.layouts.forEach((data) => {
-        if ( Array.isArray((data.devices ))) {
+        if (Array.isArray(data.devices)) {
           findDeviceExisInLayout.push(...data.devices);
         }
       });
@@ -180,6 +183,8 @@ function App() {
           setDeviceInGroups,
           selecIndexOfLayout,
           setSelecIndexOfLayout,
+          notificationMessage,
+          setNotificationMessage,
         }}
       >
         <DndProvider backend={HTML5Backend}>

@@ -1,5 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
-import { updateDataBase } from "../../../../lib/function/dataBaseCRUD";
+import {
+  updateDataBase,
+  writeDataBase,
+} from "../../../../lib/function/dataBaseCRUD";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import {
@@ -16,16 +19,18 @@ import { useContextApi } from "../../../../lib/hooks/useContexApi";
 import DeviceComponent from "../deviceComponent";
 import useSound from "use-sound";
 import errorSound from "../../assets/sounds/errorSound.mp3";
+import warningSond from "../../assets/sounds/warning.mp3";
 
 const CardDrop = ({
   isError,
+  isWarning,
   errorMessage,
   item,
   onClick = () => null,
   onDoubleClick = () => null,
   isActive,
 }) => {
-  const { changeThem } = useContextApi();
+  const { changeThem, currentUserId, notificationMessage } = useContextApi();
   const { publicDevice } = useSelector((state) => state.devices);
   const control = publicDevice[item?.macAddress]?.control || {};
 
@@ -42,15 +47,49 @@ const CardDrop = ({
   const defaultRangeTimer = parseInt(control.rangeTimer);
   const defaultRangeLog = parseInt(control.rangeLog);
 
-  const [play, { stop }] = useSound(errorSound);
+  useEffect(() => {
+    if (isError || isWarning) {
+      const isNotificationAlradyExis = notificationMessage
+        .map((data) => data.port)
+        .includes(errorMessage.port);
+
+      if (isNotificationAlradyExis) return;
+
+      const dateNow = new Date();
+      const createdAt = `${dateNow.toDateString()} ${dateNow.getHours()}:${dateNow.getMinutes()}:${dateNow.getSeconds()}`;
+      const path = `users/${currentUserId}/notification`;
+      const data = [
+        ...notificationMessage,
+        { message: errorMessage.message, port: errorMessage.port, createdAt },
+      ];
+      writeDataBase(path, data);
+    }
+  }, [isError, isWarning]);
+
+  const [play, { stop }] = useSound(isError ? errorSound : warningSond);
+  useEffect(() => {
+    const soundStatus = JSON.parse(localStorage.getItem("sound"));
+    let clear;
+    let stopSound = true;
+    if (isError && soundStatus && isSwitchOn) {
+      clear = setInterval(() => {
+        stopSound ? play() : stop();
+        stopSound = stopSound ? false : true;
+      }, 5000);
+    }
+    return () => clearInterval(clear);
+  });
 
   useEffect(() => {
-    if (!isError) return;
+    const soundStatus = JSON.parse(localStorage.getItem("sound"));
+    let clear;
     let stopSound = true;
-    const clear = setInterval(() => {
-      stopSound ? play() : stop();
-      stopSound = stopSound ? false : true;
-    }, 5000);
+    if (isWarning && soundStatus && isSwitchOn) {
+      clear = setInterval(() => {
+        stopSound ? play() : stop();
+        stopSound = stopSound ? false : true;
+      }, 2000);
+    }
     return () => clearInterval(clear);
   });
 
@@ -155,6 +194,38 @@ const CardDrop = ({
     setRangeLog(control?.rangeLog);
   }, []);
 
+  const PopUpSensorValue = ({ children }) => (
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        position: "absolute",
+        borderRadius: "10px",
+        border: "1px solid #e5e5e5",
+        padding: "10px",
+        minWidth: "150px",
+        marginTop: "10px",
+      }}
+    >
+      {children}
+    </div>
+  );
+
+  let bgcolorDevice = () => {
+    if (!isSwitchOn) {
+      return "red";
+    }
+    if (isError) {
+      return "red";
+    }
+    if (isWarning) {
+      return "#FFDC27";
+    }
+    return "#8be9c6";
+  };
+
   return (
     <>
       <div
@@ -173,9 +244,10 @@ const CardDrop = ({
         style={{ position: "absolute" }}
       >
         <DeviceComponent
-          isError={isError}
+          isShowRipple={(isError && isSwitchOn) || (isWarning && isSwitchOn)}
           deviceStyle={{
             border: isActive ? "2px solid dodgerblue" : "none",
+            backgroundColor: bgcolorDevice(),
           }}
           topLeftStyles={{
             backgroundColor: item.properties[0] ? "#ab30e4" : "#000",
@@ -184,46 +256,41 @@ const CardDrop = ({
             backgroundColor: item.properties[1] ? "#ff9925" : "#000",
           }}
           bottomLeftStyles={{
-            backgroundColor: item.properties[3] ? "#FF2782" : "#000",
+            backgroundColor: item.properties[2] ? "#FF2782" : "#000",
           }}
           botomRightStyles={{
-            backgroundColor: item.properties[2] ? "#34dd9f" : "#000",
+            backgroundColor: item.properties[3] ? "#34dd9f" : "#000",
           }}
         />
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            position: "absolute",
-            minHeight: "150px",
-            minWidth: "250px",
-          }}
-        >
-          {showSensorValue &&
-            !isError &&
-            Array.isArray(item.sensor) &&
-            item.sensor.map((data, index) => (
-              <small
-                key={index}
-                style={{
-                  color: isSwitchOn ? (changeThem ? "white" : "gray") : "red",
-                }}
-              >
-                {data.sensorName} : {data.value}
-              </small>
-            ))}
 
-          {showSensorValue && isError && (
+        {showSensorValue && !isError && (
+          <PopUpSensorValue>
+            {Array.isArray(item.sensor) &&
+              item.sensor.map((data, index) => (
+                <small
+                  key={index}
+                  style={{
+                    color: isSwitchOn ? (changeThem ? "white" : "gray") : "red",
+                  }}
+                >
+                  {data.sensorName} : {data.value}
+                </small>
+              ))}
+          </PopUpSensorValue>
+        )}
+
+        {showSensorValue && isError && (
+          <PopUpSensorValue>
             <small
               style={{
                 color: "rgb(241, 79, 79)",
                 maxWidth: "150px",
               }}
             >
-              {errorMessage}
+              {errorMessage.message}
             </small>
-          )}
-        </div>
+          </PopUpSensorValue>
+        )}
       </div>
 
       {/* device settings */}
@@ -245,6 +312,7 @@ const CardDrop = ({
               spacing={5}
             >
               <Stack direction="row" alignItems="center" spacing={1}>
+                <ListItemText>{item.deviceName}</ListItemText>
                 <ListItemText>{isSwitchOn ? "on" : "off"}</ListItemText>
                 <Switch
                   checked={Boolean(isSwitchOn)}

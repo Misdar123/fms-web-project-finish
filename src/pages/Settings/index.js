@@ -34,6 +34,7 @@ import {
 import { updateDataBase } from "../../lib/function/dataBaseCRUD";
 import { useSelector } from "react-redux";
 import DeviceProperties from "./components/DeviceProperties";
+import VolumeUpRoundedIcon from "@mui/icons-material/VolumeUpRounded";
 
 import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
@@ -110,11 +111,18 @@ const Settings = () => {
   const [openProfileSetting, setOpenProfileSetting] = useState(false);
   const [newUserName, setNewUserName] = useState(user?.userName);
 
+  const [openSoundSetting, setOpenSoundSetting] = useState(false);
+  const [isPlaySound, setIsPlaySound] = useState(true);
+
   const [openDialogUserName, setOpenDialogUserName] = useState(false);
   const [openDialogResetPassword, setOpenDialogResetPassword] = useState(false);
 
   const handleOpenThemSettings = () => {
     setOpenThemSetting(!openThemSetting);
+  };
+
+  const handleOpenSoundSettings = () => {
+    setOpenSoundSetting(!openSoundSetting);
   };
 
   const handleOpenDeviceSettings = () => {
@@ -154,6 +162,18 @@ const Settings = () => {
         // ..
       });
   };
+
+  const handlePlaySound = () => {
+    setIsPlaySound((isPlaySound) => {
+      localStorage.setItem("sound", !isPlaySound);
+      return !isPlaySound;
+    });
+  };
+
+  useEffect(() => {
+    const soundStatus = localStorage.getItem("sound");
+    setIsPlaySound(JSON.parse(soundStatus));
+  }, []);
 
   return (
     <div
@@ -195,6 +215,29 @@ const Settings = () => {
                   />
                 </ListItemIcon>
                 <ListItemText primary={changeThem ? "Light" : "Dark"} />
+              </ListItemButton>
+            </List>
+          </Collapse>
+
+          {/* sound setting */}
+
+          <ListItemButton onClick={handleOpenSoundSettings}>
+            <ListItemIcon>
+              <VolumeUpRoundedIcon />
+            </ListItemIcon>
+            <ListItemText primary="Sound Effect" />
+            {openSoundSetting ? <ExpandLess /> : <ExpandMore />}
+          </ListItemButton>
+          <Collapse in={openSoundSetting} timeout="auto" unmountOnExit>
+            <List component="div">
+              <ListItemButton sx={{ pl: 5 }}>
+                <ListItemIcon>
+                  <FormControlLabel
+                    onChange={handlePlaySound}
+                    control={<Switch checked={isPlaySound} />}
+                    label={isPlaySound ? "On" : "Off"}
+                  />
+                </ListItemIcon>
               </ListItemButton>
             </List>
           </Collapse>

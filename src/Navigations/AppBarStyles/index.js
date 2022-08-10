@@ -1,24 +1,34 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { styled } from "@mui/material/styles";
 import MuiAppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import IconLogo from "./IconLogo";
-import { Badge, Box, Button, Paper, Stack, Typography } from "@mui/material";
+import {
+  Badge,
+  Box,
+  Button,
+  colors,
+  Divider,
+  Paper,
+  Stack,
+  Typography,
+} from "@mui/material";
 import CommentsDisabledIcon from "@mui/icons-material/CommentsDisabled";
 import MailIcon from "@mui/icons-material/Mail";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import { useContextApi } from "../../lib/hooks/useContexApi";
 import { signOut, getAuth } from "firebase/auth";
 import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
 
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
+import ClearIcon from "@mui/icons-material/Clear";
+import { writeDataBase } from "../../lib/function/dataBaseCRUD";
 
 const drawerWidth = 200;
 
@@ -41,7 +51,13 @@ const AppBar = styled(MuiAppBar, {
 }));
 
 const AppBarStyles = ({ isOpen, setIsOpen }) => {
-  const { setIsAuth, setChangeThem } = useContextApi();
+  const {
+    setIsAuth,
+    setChangeThem,
+    changeThem,
+    currentUserId,
+    notificationMessage,
+  } = useContextApi();
   const [openPopUp, setOpenPopUp] = useState(false);
 
   const handleDrawerOpen = () => {
@@ -57,7 +73,7 @@ const AppBarStyles = ({ isOpen, setIsOpen }) => {
     });
   };
 
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
 
   const handleOpenMenu = (event) => {
@@ -69,6 +85,17 @@ const AppBarStyles = ({ isOpen, setIsOpen }) => {
 
   const handlePopUp = () => {
     setOpenPopUp(!openPopUp);
+  };
+
+  const handleDeleteNotification = (indexDelete) => {
+    const newData = [];
+    notificationMessage.forEach((data, index) => {
+      if (index === indexDelete) return;
+      newData.push(data);
+    });
+
+    const path = `users/${currentUserId}/notification`;
+    writeDataBase(path, newData);
   };
 
   return (
@@ -105,7 +132,7 @@ const AppBarStyles = ({ isOpen, setIsOpen }) => {
             color="inherit"
             onClick={handleOpenMenu}
           >
-            <Badge badgeContent={0} color="error">
+            <Badge badgeContent={notificationMessage.length} color="error">
               <NotificationsIcon />
             </Badge>
           </IconButton>
@@ -117,34 +144,71 @@ const AppBarStyles = ({ isOpen, setIsOpen }) => {
           </IconButton>
         </Box>
       </Toolbar>
-      <Paper sx={{ width: 320, maxWidth: "100%" }}>
-        <Menu
-          id="basic-menu"
-          anchorEl={anchorEl}
-          open={open}
-          onClose={handleClose}
-          MenuListProps={{
-            "aria-labelledby": "basic-button",
+
+      <Menu
+        id="basic-menu"
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+        MenuListProps={{
+          "aria-labelledby": "basic-button",
+        }}
+      >
+        <Box
+          style={{
+            height: window.innerHeight,
+            display: "flex",
+            padding: "10px",
+            maxWidth: "400px",
           }}
         >
-          <MenuItem onClick={handleClose}>
-            <div
-              style={{
-                minHeight: "100px",
-                width: "200px",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
+          {notificationMessage.length === 0 && (
+            <Stack
+              direction="row"
+              alignItems="center"
+              justifyContent="center"
+              spacing={2}
+              flex={1}
+              width="400px"
             >
-              <Stack direction="row" alignItems="center" spacing={2}>
-                <CommentsDisabledIcon sx={{ color: "gray" }} />
-                <Typography sx={{ color: "gray" }}>Nothing</Typography>
-              </Stack>
-            </div>
-          </MenuItem>
-        </Menu>
-      </Paper>
+              <CommentsDisabledIcon sx={{ color: "gray" }} />
+              <Typography sx={{ color: "gray" }}>
+                tidak ada notifikasi
+              </Typography>
+            </Stack>
+          )}
+          <Stack spacing={1}>
+            {notificationMessage.map((data, index) => (
+              <Box
+                key={index}
+                sx={{
+                  p: 1,
+                  borderRadius: "10px",
+                  position: "relative",
+                }}
+                bgcolor={changeThem || colors.grey[100]}
+              >
+                <IconButton
+                  onClick={() => handleDeleteNotification(index)}
+                  sx={{ position: "absolute", bottom: 0, right: 0 }}
+                >
+                  <ClearIcon />
+                </IconButton>
+
+                <Typography sx={{ pr: 2 }}>{data.message}</Typography>
+                <Typography
+                  variant="small"
+                  style={{ color: "gray", fontSize: "13px" }}
+                >
+                  {data.createdAt}
+                </Typography>
+                {changeThem && <Divider sx={{mt: 2}}/>}
+              </Box>
+            ))}
+          </Stack>
+        </Box>
+      </Menu>
+
       <Dialog
         open={openPopUp}
         onClose={handlePopUp}

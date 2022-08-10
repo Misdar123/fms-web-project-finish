@@ -31,13 +31,19 @@ function FormNewDevice({ openDialog, setOpenDialog }) {
   const [deviceName, setDeviceName] = useState("");
   const [macAddress, setMacAddress] = useState("");
 
-  const [sendDataInterval, setSendDataInterval] = useState(0);
+  const [sendDataInterval, setSendDataInterval] = useState(10);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
 
   const [isError, setIsError] = useState({ error: false, message: "" });
 
   const [deviceProperties, setDeviceProperties] = useState([
-    { ID: Date.now(), modularType: "", IOType: "", sensorType: "" },
+    {
+      ID: Date.now(),
+      modularType: "",
+      IOType: "",
+      sensorType: "",
+      sensorMaxValue: 0,
+    },
   ]);
 
   const handleSubmit = () => {
@@ -68,7 +74,8 @@ function FormNewDevice({ openDialog, setOpenDialog }) {
         if (
           device.modularType === "" ||
           device.IOType === "" ||
-          device.sensorType === ""
+          device.sensorType === "" ||
+          device.sensorMaxValue === 0
         ) {
           alert("device properties can't empty");
           result = true;
@@ -112,7 +119,7 @@ function FormNewDevice({ openDialog, setOpenDialog }) {
         onClose={() => {
           setOpenDialog(!openDialog);
           setDeviceProperties([{}]);
-          setSendDataInterval(0)
+          setSendDataInterval(0);
         }}
         fullWidth
       >
@@ -162,7 +169,7 @@ function FormNewDevice({ openDialog, setOpenDialog }) {
               send data interval :
             </Typography>
             <Slider
-              defaultValue={0}
+              defaultValue={10}
               aria-label="Default"
               valueLabelDisplay="auto"
               onChange={(e) => setSendDataInterval(e.target.value)}
@@ -225,7 +232,7 @@ function FormNewDevice({ openDialog, setOpenDialog }) {
             onClick={() => {
               setOpenDialog(!openDialog);
               setDeviceProperties([{}]);
-              setSendDataInterval(0)
+              setSendDataInterval(0);
             }}
           >
             Cancel
@@ -242,7 +249,6 @@ const DevicePropertiesComponent = ({
   deviceProperties,
   setDeviceProperties,
   index,
-  dialogRef,
 }) => {
   const [expandModularType, setExpandModularType] = useState(null);
   const [expandIOType, setExpandIOType] = useState(null);
@@ -251,12 +257,15 @@ const DevicePropertiesComponent = ({
   const [modularType, setModularType] = useState("");
   const [IOType, setIOType] = useState("");
   const [sensorType, setSensorType] = useState("");
+  const [sensorMaxValue, setSensorMaxValue] = useState(50);
+  const [sensorMinValue, setSensorMinValue] = useState(10);
 
   const newDeviceProperties = {
     ID: Date.now(),
     modularType,
     IOType,
     sensorType,
+    sensorMaxValue,
   };
 
   const handleAddProperties = () => {
@@ -361,41 +370,78 @@ const DevicePropertiesComponent = ({
       )}
 
       {expandIOType && (
-        <Stack spacing={1} direction="row" mt={2} alignItems="center">
-          {modularType === "Input" ? (
-            <FormControl fullWidth>
-              <InputLabel id="demo-simple-select-label">sensor type</InputLabel>
-              <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                value={sensorType}
-                label="Sensor Type"
-                onChange={handleChangeSensorType}
-              >
-                <MenuItem value={"Temperature"}>Temperature</MenuItem>
-                <MenuItem value={"Humidity"}>Humidity</MenuItem>
-                <MenuItem value={"Vibration"}>Vibration</MenuItem>
-                <MenuItem value={"Presure"}>Presure</MenuItem>
-              </Select>
-            </FormControl>
-          ) : (
-            <FormControl fullWidth>
-              <InputLabel id="demo-simple-select-label">sensor type</InputLabel>
-              <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                value={sensorType}
-                label="Sensor Type"
-                onChange={handleChangeSensorType}
-              >
-                <MenuItem value={"Lamp"}>Lamp</MenuItem>
-                <MenuItem value={"Fan"}>Fan</MenuItem>
-                <MenuItem value={"Buzzer"}>Buzzer</MenuItem>
-                <MenuItem value={"LED"}>LED</MenuItem>
-              </Select>
-            </FormControl>
-          )}
-        </Stack>
+        <>
+          <Stack spacing={1} direction="row" mt={2} alignItems="center">
+            {modularType === "Input" ? (
+              <FormControl fullWidth>
+                <InputLabel id="demo-simple-select-label">
+                  sensor type
+                </InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  value={sensorType}
+                  label="Sensor Type"
+                  onChange={handleChangeSensorType}
+                >
+                  <MenuItem value={"Temperature"}>Temperature</MenuItem>
+                  <MenuItem value={"Humidity"}>Humidity</MenuItem>
+                  <MenuItem value={"Vibration"}>Vibration</MenuItem>
+                  <MenuItem value={"Presure"}>Presure</MenuItem>
+                </Select>
+              </FormControl>
+            ) : (
+              <FormControl fullWidth>
+                <InputLabel id="demo-simple-select-label">
+                  sensor type
+                </InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  value={sensorType}
+                  label="Sensor Type"
+                  onChange={handleChangeSensorType}
+                >
+                  <MenuItem value={"Lamp"}>Lamp</MenuItem>
+                  <MenuItem value={"Fan"}>Fan</MenuItem>
+                  <MenuItem value={"Buzzer"}>Buzzer</MenuItem>
+                  <MenuItem value={"LED"}>LED</MenuItem>
+                </Select>
+              </FormControl>
+            )}
+          </Stack>
+
+          <Stack
+            direction="row"
+            mb={2}
+            mt={2}
+            spacing={2}
+            pr={5}
+            justifyContent="space-between"
+          >
+            <Stack direction="row" flex={1} alignContent="center" spacing={1}>
+              <Typography>Min</Typography>
+              <Slider
+                defaultValue={10}
+                aria-label="Default"
+                valueLabelDisplay="auto"
+                onChange={(e) => setSensorMinValue(e.target.value)}
+              />
+              <Typography>{sensorMinValue}</Typography>
+            </Stack>
+
+            <Stack direction="row" flex={1} lignContent="center" spacing={1}>
+              <Typography>Max</Typography>
+              <Slider
+                defaultValue={50}
+                aria-label="Default"
+                valueLabelDisplay="auto"
+                onChange={(e) => setSensorMaxValue(e.target.value)}
+              />
+              <Typography>{sensorMaxValue}</Typography>
+            </Stack>
+          </Stack>
+        </>
       )}
     </Stack>
   );
