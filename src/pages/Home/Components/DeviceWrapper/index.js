@@ -77,7 +77,6 @@ const DeviceWrapper = ({ children }) => {
   }, [dropItems]);
 
   // find refrence drop item device in all device list
-
   const [deviceRefRence] = useGetRealDevices();
 
   useEffect(() => {
@@ -125,7 +124,7 @@ const DeviceWrapper = ({ children }) => {
         const PublicSensors = publicDeviceRef.sensor.map((data) => data);
 
         let isMatch = true;
-        let errorMessage = "";
+        let errorMessage = {};
         let isWarning = false;
         let isSensorActive = true;
 
@@ -133,7 +132,9 @@ const DeviceWrapper = ({ children }) => {
           if (PublicSensors[i].value >= item.properties[i].sensorLimit) {
             isWarning = true;
             const port = PublicSensors[i].properties.port;
-            errorMessage = { message: "over limit", port };
+            const sensorName = PublicSensors[i].sensorName;
+            const message = `${sensorName} is over limit (${item.deviceName})`;
+            errorMessage = { message: message, port, type: "warning" };
           }
 
           if (!PublicSensors[i].isActive) {
@@ -141,18 +142,17 @@ const DeviceWrapper = ({ children }) => {
             const sensorName = PublicSensors[i].sensorName;
             const port = PublicSensors[i].properties.port;
             const message = `${sensorName} (Port ${port}) is not detected, please check your device (${item.deviceName})`;
-            errorMessage = { port, message };
+            errorMessage = { port, message, type: "error" };
           }
 
           if (isMatch) {
             const modularType =
               item.properties[i].modularType.toUpperCase() ===
               PublicSensors[i].properties.modularType.toUpperCase();
-
             if (!modularType) {
               const port = PublicSensors[i].properties.port;
-              const message = "modularType not match at position " + port;
-              errorMessage = { port, message };
+              const message = "modularType not match ";
+              errorMessage = { port, message, type: "error" };
             }
 
             const IOType =
@@ -160,18 +160,17 @@ const DeviceWrapper = ({ children }) => {
               PublicSensors[i].properties.IOType.toUpperCase();
             if (!IOType) {
               const port = PublicSensors[i].properties.port;
-              const message = "IOType not match at position " + port;
-              errorMessage = { port, message };
+              const message = "IOType not match ";
+              errorMessage = { port, message, type: "error" };
             }
 
             const sensorType =
               item.properties[i].sensorType.toUpperCase() ===
               PublicSensors[i].properties.sensorType.toUpperCase();
-
             if (!sensorType) {
               const port = PublicSensors[i].properties.port;
-              const message = "sensorType not match at position " + port;
-              errorMessage = { port, message };
+              const message = "sensorType not match";
+              errorMessage = { port, message, type: "error" };
             }
 
             isMatch = IOType && modularType && sensorType;

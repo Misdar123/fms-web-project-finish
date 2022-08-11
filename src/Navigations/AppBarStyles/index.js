@@ -1,17 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { styled } from "@mui/material/styles";
 import MuiAppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import IconLogo from "./IconLogo";
+import WarningRoundedIcon from "@mui/icons-material/WarningRounded";
 import {
   Badge,
   Box,
   Button,
   colors,
   Divider,
-  Paper,
   Stack,
   Typography,
 } from "@mui/material";
@@ -79,6 +79,7 @@ const AppBarStyles = ({ isOpen, setIsOpen }) => {
   const handleOpenMenu = (event) => {
     setAnchorEl(event.currentTarget);
   };
+
   const handleClose = () => {
     setAnchorEl(null);
   };
@@ -120,7 +121,7 @@ const AppBarStyles = ({ isOpen, setIsOpen }) => {
             size="large"
             aria-label="show 4 new mails"
             color="inherit"
-            onClick={handleOpenMenu}
+            // onClick={handleOpenMenu}
           >
             <Badge badgeContent={0} color="error">
               <MailIcon />
@@ -188,21 +189,42 @@ const AppBarStyles = ({ isOpen, setIsOpen }) => {
                 }}
                 bgcolor={changeThem || colors.grey[100]}
               >
-                <IconButton
-                  onClick={() => handleDeleteNotification(index)}
-                  sx={{ position: "absolute", bottom: 0, right: 0 }}
+                <Stack
+                  direction="row"
+                  justifyContent="space-between"
+                  alignItems="center"
                 >
-                  <ClearIcon />
-                </IconButton>
+                  <Typography
+                    variant="small"
+                    style={{ color: "gray", fontSize: "13px" }}
+                  >
+                    {data.createdAt}
+                  </Typography>
+                  <IconButton onClick={() => handleDeleteNotification(index)}>
+                    <ClearIcon />
+                  </IconButton>
+                </Stack>
 
-                <Typography sx={{ pr: 2 }}>{data.message}</Typography>
-                <Typography
-                  variant="small"
-                  style={{ color: "gray", fontSize: "13px" }}
-                >
-                  {data.createdAt}
-                </Typography>
-                {changeThem && <Divider sx={{mt: 2}}/>}
+                <Typography>{data.message}</Typography>
+
+                {data.type === "warning" && (
+                  <Stack direction="row" alignItems="center" mt={1}>
+                    <WarningRoundedIcon sx={{ color: "#ff8f00" }} />
+                    <Typography fontWeight="bold" sx={{ color: "#ff8f00" }}>
+                      WARNING
+                    </Typography>
+                  </Stack>
+                )}
+
+                {data.type === "error" && (
+                  <Stack direction="row" alignItems="center" mt={1}>
+                    <WarningRoundedIcon sx={{ color: "red" }} />
+                    <Typography fontWeight="bold" sx={{ color: "red" }}>
+                      ERROR
+                    </Typography>
+                  </Stack>
+                )}
+                {changeThem && <Divider sx={{ mt: 2 }} />}
               </Box>
             ))}
           </Stack>

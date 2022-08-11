@@ -19,6 +19,8 @@ import {
   signInWithEmailAndPassword,
   getAuth,
   sendPasswordResetEmail,
+  setPersistence,
+  browserSessionPersistence,
 } from "firebase/auth";
 import { Link } from "react-router-dom";
 
@@ -57,47 +59,48 @@ const Login = () => {
     if (email === "" || password === "") {
       setIsError(true);
       setErrorMessageEmail("tidak boleh kosong");
-      setErrorMessagePassword("tidak boleh kosong")
+      setErrorMessagePassword("tidak boleh kosong");
       return;
     }
 
     setIsLoading(true);
     const auth = getAuth();
-    signInWithEmailAndPassword(auth, email, password)
-      .then(() => setIsLoading(false))
-      .then((userCredential) => {
-        const isVerified = userCredential?.user?.emailVerified;
-        if (isVerified) {
-          setIsAuth(true);
-          console.log("success");
-        } else {
-          console.log("email is not verified");
-          setErrorMessageEmail("email belum terverifikasi");
+    setPersistence(auth, browserSessionPersistence).then(() => {
+      signInWithEmailAndPassword(auth, email, password)
+        .then(() => setIsLoading(false))
+        .then((userCredential) => {
+          const isVerified = userCredential?.user?.emailVerified;
+          if (isVerified) {
+            setIsAuth(true);
+            console.log("success");
+          } else {
+            console.log("email is not verified");
+            setErrorMessageEmail("email belum terverifikasi");
+            setIsError(true);
+          }
+        })
+        .catch((error) => {
+          console.log(error.code);
           setIsError(true);
-        }
-      })
-      .catch((error) => {
-        console.log(error.code);
-        setIsError(true);
-        switch (error.code) {
-          case "auth/invalid-email":
-            setErrorMessageEmail("email tidak valid");
-            break;
-          case "auth/email-already-in-use":
-            setErrorMessageEmail("email sudah digunakan");
-            break;
-          case "auth/user-not-found":
-            setErrorMessageEmail("email belum terdaftar, silahkan buat akun");
-            break;
-          case "auth/wrong-password":
-            setErrorMessagePassword("Password salah");
-            break;
-          default:
-        }
-      })
-      .finally(() => setIsLoading(false));
+          switch (error.code) {
+            case "auth/invalid-email":
+              setErrorMessageEmail("email tidak valid");
+              break;
+            case "auth/email-already-in-use":
+              setErrorMessageEmail("email sudah digunakan");
+              break;
+            case "auth/user-not-found":
+              setErrorMessageEmail("email belum terdaftar, silahkan buat akun");
+              break;
+            case "auth/wrong-password":
+              setErrorMessagePassword("Password salah");
+              break;
+            default:
+          }
+        })
+        .finally(() => setIsLoading(false));
+    });
   };
-
 
   return (
     <>

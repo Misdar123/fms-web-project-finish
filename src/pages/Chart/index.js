@@ -345,7 +345,7 @@ export default function Chart() {
               ) : (
                 <Grid item sm={12} md={12} key={index}>
                   <CardChart
-                    data={chartData}
+                    data={chartData[0].log}
                     title={value.deviceName}
                     sensorName={value.sensorName}
                     isShowAllSensors={showAllSensors}

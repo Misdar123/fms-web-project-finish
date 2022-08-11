@@ -86,6 +86,8 @@ function App() {
     setIsDataAvaliable(true);
   };
 
+  // localStorage.clear()
+
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       if (user?.emailVerified) {

@@ -231,7 +231,6 @@ const CardChart = ({ data, title, sensorName, isShowAllSensors }) => {
                 stroke="#8884d8"
                 fillOpacity={1}
                 fill="url(#color1)"
-                isAnimationActive={false}
               />
               <Area
                 type="monotone"
@@ -239,7 +238,6 @@ const CardChart = ({ data, title, sensorName, isShowAllSensors }) => {
                 stroke="#82ca9d"
                 fillOpacity={1}
                 fill="url(#color2)"
-                isAnimationActive={false}
               />
               <Area
                 type="monotone"
@@ -247,7 +245,6 @@ const CardChart = ({ data, title, sensorName, isShowAllSensors }) => {
                 stroke="dodgerblue"
                 fillOpacity={1}
                 fill="url(#color3)"
-                isAnimationActive={false}
               />
             </>
           )}

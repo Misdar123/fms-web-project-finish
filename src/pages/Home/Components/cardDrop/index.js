@@ -53,14 +53,23 @@ const CardDrop = ({
         .map((data) => data.port)
         .includes(errorMessage.port);
 
-      if (isNotificationAlradyExis) return;
+      const isMessageAlreadyExis = notificationMessage
+        .map((data) => data.message)
+        .includes(errorMessage.message);
+
+      if (isNotificationAlradyExis && isMessageAlreadyExis) return;
 
       const dateNow = new Date();
       const createdAt = `${dateNow.toDateString()} ${dateNow.getHours()}:${dateNow.getMinutes()}:${dateNow.getSeconds()}`;
       const path = `users/${currentUserId}/notification`;
       const data = [
         ...notificationMessage,
-        { message: errorMessage.message, port: errorMessage.port, createdAt },
+        {
+          message: errorMessage.message,
+          port: errorMessage.port,
+          type: errorMessage.type,
+          createdAt,
+        },
       ];
       writeDataBase(path, data);
     }
