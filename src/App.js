@@ -70,9 +70,9 @@ function App() {
     // get all macAdress device for check duplicated device
     if (Array.isArray(data.layouts)) {
       const findDeviceExisInLayout = [];
-      data.layouts.forEach((data) => {
-        if (Array.isArray(data.devices)) {
-          findDeviceExisInLayout.push(...data.devices);
+      data.layouts.forEach((item) => {
+        if (Array.isArray(item.devices)) {
+          findDeviceExisInLayout.push(...item.devices);
         }
       });
       const allMacAddress = findDeviceExisInLayout.map(

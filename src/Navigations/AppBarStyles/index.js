@@ -160,17 +160,16 @@ const AppBarStyles = ({ isOpen, setIsOpen }) => {
             height: window.innerHeight,
             display: "flex",
             padding: "10px",
-            maxWidth: "400px",
           }}
         >
           {notificationMessage.length === 0 && (
             <Stack
               direction="row"
-              alignItems="center"
+              mt="20px"
               justifyContent="center"
               spacing={2}
               flex={1}
-              width="400px"
+              width={{ xs: "200px", md: "300px" }}
             >
               <CommentsDisabledIcon sx={{ color: "gray" }} />
               <Typography sx={{ color: "gray" }}>
@@ -185,7 +184,6 @@ const AppBarStyles = ({ isOpen, setIsOpen }) => {
                 sx={{
                   p: 1,
                   borderRadius: "10px",
-                  position: "relative",
                 }}
                 bgcolor={changeThem || colors.grey[100]}
               >
@@ -193,6 +191,7 @@ const AppBarStyles = ({ isOpen, setIsOpen }) => {
                   direction="row"
                   justifyContent="space-between"
                   alignItems="center"
+                  minWidth={{ xs: "200px", sm: "400px" }}
                 >
                   <Typography
                     variant="small"

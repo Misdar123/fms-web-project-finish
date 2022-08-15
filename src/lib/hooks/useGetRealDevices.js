@@ -5,14 +5,12 @@ export const useGetRealDevices = () => {
   const deviceRefRence = (devices) => {
     const result = [];
     devices.forEach((device) => {
-      const findDeviceRefrence = allDevice.filter(
+      const findDeviceRefrence = allDevice.find(
         (deviceItem) => deviceItem.macAddress === device.macAddress
       );
-      result.push(...findDeviceRefrence);
+      result.push(findDeviceRefrence);
     });
-
     return result;
   };
-
   return [deviceRefRence];
 };

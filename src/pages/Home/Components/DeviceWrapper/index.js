@@ -37,10 +37,12 @@ const DeviceWrapper = ({ children }) => {
     if (result[0]?.macAddress === undefined) {
       document.location.reload();
     }
+
     const getAllMacAdress =
       JSON.parse(localStorage.getItem("allMacAddress")) || [];
     const isDeviceAlreadyExis = getAllMacAdress.includes(result[0].macAddress);
 
+    console.log(getAllMacAdress);
     if (!isDeviceAlreadyExis) {
       setDropItems((item) => [...item, result[0]]);
     } else {
@@ -64,21 +66,21 @@ const DeviceWrapper = ({ children }) => {
     const isDeviceAlreadyExis = getAllMacAdress.includes(
       ...dropItemsId.slice(-1)
     );
+
     if (isDeviceAlreadyExis) return;
 
     if (dropItems.length === 0) return;
 
-    const dataToSave = dragItems.map((data) => {
+    const newDevices = dropItems.map((data) => {
       return { macAddress: data.macAddress, id: data.id };
     });
 
     const path = `users/${currentUserId}/layouts/${layoutIndexSelected}`;
-    updateDataBase(path, { ...newLayoutData, devices: dataToSave });
+    updateDataBase(path, { ...newLayoutData, devices: newDevices });
   }, [dropItems]);
 
   // find refrence drop item device in all device list
   const [deviceRefRence] = useGetRealDevices();
-
   useEffect(() => {
     setDropItems([]);
     if (Array.isArray(newLayoutData?.devices)) {
@@ -129,6 +131,12 @@ const DeviceWrapper = ({ children }) => {
         let isSensorActive = true;
 
         for (let i = 0; PublicSensors.length > i; i++) {
+          if (
+            Array.isArray(item.properties) ||
+            Array.isArray(PublicSensors.properties)
+          )
+            return;
+
           if (PublicSensors[i].value >= item.properties[i].sensorLimit) {
             isWarning = true;
             const port = PublicSensors[i].properties.port;
