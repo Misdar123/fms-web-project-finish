@@ -121,7 +121,7 @@ const DeviceWrapper = ({ children }) => {
       {dropItems.map((item, index) => {
         const publicDeviceRef = publicDevice[item.macAddress];
 
-        if (!Array.isArray(publicDeviceRef.sensor)) return;
+        // if (!Array.isArray(publicDeviceRef.sensor)) return;
 
         const PublicSensors = publicDeviceRef.sensor.map((data) => data);
 
@@ -130,13 +130,16 @@ const DeviceWrapper = ({ children }) => {
         let isWarning = false;
         let isSensorActive = true;
 
-        for (let i = 0; PublicSensors.length > i; i++) {
-          if (
-            Array.isArray(item.properties) ||
-            Array.isArray(PublicSensors.properties)
-          )
-            return;
+        // if (
+        //   Array.isArray(item.properties) ||
+        //   Array.isArray(PublicSensors.properties)
+        // ) {
+        //   alert("hello")
+        //   return;
+        // }
+         
 
+        for (let i = 0; PublicSensors.length > i; i++) {
           if (PublicSensors[i].value >= item.properties[i].sensorLimit) {
             isWarning = true;
             const port = PublicSensors[i].properties.port;
